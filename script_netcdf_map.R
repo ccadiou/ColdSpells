@@ -14,6 +14,7 @@ dname <- "slp"
 ncin <- nc_open(ncfname)
 print(ncin)
 
+#get variables
 lon <- ncvar_get(ncin, "lon")
 nlon <- dim(lon)
 head(lon)
@@ -38,9 +39,8 @@ dim(slp_array)
 
 nc_close(ncin)
 
+#Display an register image
 png(filename="slp.png",bg="white")
-# image(lon, lat, slp_array)
-# plot(wrld_simpl, add = TRUE)
 image.plot(lon, lat, slp_array,
            main = "Sea Level Pressure",
            xlab = "Longitude",
@@ -48,8 +48,7 @@ image.plot(lon, lat, slp_array,
            legend.lab = "Pa",
            legend.line = 2.5,
            col = rev(viridis(200)))  # To get the higher emission values darker we invert it
-# plot(shp, add = T, border = "Black")  # To add the shapefile and paint the border 'Black'
-data(wrld_simpl)
+data(wrld_simpl)  #displays countries' borders
 plot(wrld_simpl, add = TRUE)
-# mtext("South East Brazil")  # To put a sub-title
+# mtext("Subtitle")  # To put a sub-title
 dev.off()
