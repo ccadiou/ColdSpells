@@ -18,7 +18,7 @@ nc_t2m <- getNcFile(path,name_t2m)
 #Time
 t <- c(1950:2021)
 
-df_t2m <- data.frame(cbind(t,as.vector(ncvar_get(nc_t2m,"t2m"-273.15)))) #data frame de la série temporelle et conversion kelvin <-  celsius
+df_t2m <- data.frame(cbind(t,as.vector(ncvar_get(nc_t2m,"t2m"))-273.15)) #data frame de la série temporelle et conversion kelvin <-  celsius
 df_tp <- data.frame(cbind(t,as.vector(ncvar_get(nc_tp,"tp"))))
 
 #plot

@@ -24,7 +24,9 @@ plot_2y <- function(df1,df2,factor,title="",xlegend="",ylegend1="",ylegend2=""){
       # geom_point(shape = 19, aes(color="")) +
       scale_color_manual(values = c("red")) +
       theme_classic()+
-      theme(legend.position = "None",legend.title = element_blank())
+      theme(axis.title.y.left=element_text(colour="red"),
+            axis.title.y.right=element_text(colour="blue"),
+            legend.position = "None",legend.title = element_blank())
   )
 }
 
