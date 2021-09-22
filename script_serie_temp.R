@@ -25,5 +25,5 @@ df_tp <- data.frame(cbind(t,as.vector(ncvar_get(nc_tp,"tp"))))
 plot_serie_temp(df_t2m)
 plot_serie_temp(df_tp)
 
-plot_2y(df_t2m,df_tp,max(df_tp[,2])/max(df_t2m[,2]),#title = "Temperature and precipitation",
+plot_2y(df_t2m,df_tp,max(df_tp[,2])/max(df_t2m[,2]),title = "DJF mean - France",
         xlegend = "Time",ylegend1="2m temperature [°C]",ylegend2="Total precipiation [mm]")
