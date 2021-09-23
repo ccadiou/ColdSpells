@@ -3,7 +3,7 @@ plot_serie_temp <- function(df,title="",xlegend="",ylegend=""){
   return(
     p + geom_line()+
     geom_point(shape = 19, aes(color="")) +
-      scale_color_manual(values = c("red")) +
+      scale_color_manual(values = c("black")) +
       labs(
         titles = title,
         x = xlegend,y = ylegend
@@ -33,4 +33,43 @@ plot_2y <- function(df1,df2,factor,title="",xlegend="",ylegend1="",ylegend2=""){
   )
 }
 
+#Box plot obs et ana
+plot_box <- function(df,dfval,title="",xlabel="",ylabel=""){
+  p <- ggplot(df, aes(x=factor(0),y)) + 
+    geom_boxplot()+
+    expand_limits(y=0)+
+    stat_summary(fun=mean, geom="point",shape=18, size=3)+
+    labs(title = title, x = xlabel, y = ylabel)+
+    theme_classic()+
+    geom_point(data=dfval,color="red2")
+  return(p)
+}
+# #Box plot obs et ana
+# plot_box <- function(df,title="",xlabel="",ylabel=""){
+#   p <- ggplot(df, aes(x=factor(0),y)) + 
+#     geom_boxplot()+
+#     #stat_summary(fun=mean, colour="darkred", geom="point", 
+#     # shape=18, size=3)+
+#     labs(title = title,x = xlabel, y = ylabel)+
+#     theme_classic()
+#   return(p)
+# }
+
+
+plot_list <- function(dfList,title="",xlabel="",ylabel=""){
+  require("dplyr")
+  p <- ggplot(bind_rows(dfList,.id="sim"),aes(x=date,y=temp,group=sim))+
+    geom_line()+
+    theme_classic()
+  return(p)
+}
+
+plot_list_obs <- function(df,title="",xlabel="",ylabel=""){
+  require("dplyr")
+  p <- ggplot(df,aes(x=date,y=temp,color=source,group=sim))+
+    geom_line()+
+    scale_color_manual(values=c("black","red"))+
+    theme_classic()
+  return(p)
+}
 

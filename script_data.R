@@ -37,6 +37,7 @@ save(df_t2m,file="./data/t2m_DJF_19502021_fr.RData")
 #daily values
 name_t2m_daily <- "era5_t2m_daily_fr"
 nc_t2m_daily <- getNcFile(path,name_t2m_daily)  #load file
-df_t2m_daily <- data.frame(cbind(date=dates,as.vector(ncvar_get(nc_t2m_daily,"t2m"))))  #create data frame
+df_t2m_daily <- data.frame(cbind(date=dates,as.vector(ncvar_get(nc_t2m_daily,"t2m"))-273.15))  #create data frame
+colnames(df_t2m_daily)[[2]] <- "temp"
 save(df_t2m_daily,file="./data/t2m_daily_fr.RData")
 
