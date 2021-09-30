@@ -8,7 +8,7 @@ plot_serie_temp <- function(df,title="",xlegend="",ylegend=""){
         titles = title,
         x = xlegend,y = ylegend
       ) +
-      theme_classic()+
+      # theme_classic()+
       theme(legend.position = "None",legend.title = element_blank())
   )
 }
@@ -24,7 +24,7 @@ plot_2y <- function(df1,df2,factor,title="",xlegend="",ylegend1="",ylegend2=""){
       labs(titles = title,x=xlegend, y=ylegend1)+
       # geom_point(shape = 19, aes(color="")) +
       scale_color_manual(values = c("red")) +
-      theme_classic()+
+      # theme_classic()+
       theme(axis.title.y.left=element_text(colour="red"),
             axis.text.y.left=element_text(colour="red"),
             axis.title.y.right=element_text(colour="blue"),
@@ -44,7 +44,7 @@ plot_box <- function(df,dfval,title="",xlabel="",ylabel=""){
     geom_point(data=dfval,color="red2")
   return(p)
 }
-# #Box plot obs et ana
+# #Box plot obs et ana, un seul data frame en entrée
 # plot_box <- function(df,title="",xlabel="",ylabel=""){
 #   p <- ggplot(df, aes(x=factor(0),y)) + 
 #     geom_boxplot()+

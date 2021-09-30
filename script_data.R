@@ -10,6 +10,9 @@ df_ana <- read.table("../../Data/Winter/ana_z500_1_-20.30.30.70.txt",header=TRUE
 df_ana[, cols <- grep("^date", names(df_ana))] <- lapply(df_ana[, cols <- grep("^date", names(df_ana))],   #conversion des colonnes dates en format date
                                                          function(col) as.Date(as.character(col), format = "%Y%m%d")) 
 save(df_ana,file="./data/ana_z500_-20.30.30.70.RData")
+#Filtration entre deux dates
+df_ana_20102011 <- df_ana[df_ana$date >= "2010-12-21" & df_ana$date <= "2011-03-21",]
+save(df_ana_20102011,file="./data/df_ana_20102011.txt")
 #dates
 dates <- as.data.frame(df_ana$date)
 colnames(dates) <- c("date")
@@ -40,4 +43,6 @@ nc_t2m_daily <- getNcFile(path,name_t2m_daily)  #load file
 df_t2m_daily <- data.frame(cbind(date=dates,as.vector(ncvar_get(nc_t2m_daily,"t2m"))-273.15))  #create data frame
 colnames(df_t2m_daily)[[2]] <- "temp"
 save(df_t2m_daily,file="./data/t2m_daily_fr.RData")
+
+
 

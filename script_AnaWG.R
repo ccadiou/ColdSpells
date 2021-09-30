@@ -74,10 +74,14 @@ colnames(val_20102011)[1] <- "y"
 plot_box(df_sim_mean,val_20102011)
 
 #display all time series
-df_sim_obs <- rbind(cbind(df_sim,source="Simulations"),cbind(sim=1001,df_t2m_20102011,source="Observations"))
+df_sim_obs <- rbind(cbind(df_sim,source="Simulations"),cbind(sim=0,df_t2m_20102011,source="Observations"))
 df_sim_obs$source <- as.factor(df_sim_obs$source)
 df_sim_obs$source = with(df_sim_obs, factor(source, levels = rev(levels(source))))
-plot_list_obs(df_sim_obs)
+plot_list_obs(df_sim_obs_2)
+
+df_sim_obs$sim <- as.numeric(df_sim_obs$sim)
+df_sim_obs_2 <- df_sim_obs[df_sim_obs$sim<5,]
+
 
 
 
