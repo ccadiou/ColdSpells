@@ -4,7 +4,7 @@ source("fct_ncdf.R")
 
 ###### set directory ######
 path <- "~/Documents/These/Code/Winter/"
-setwd("~/Documents/These/Code/Winter/")
+setwd(path)
 
 #### Analogue data ###
 df_ana <- read.table("../../Data/Winter/ana_z500_1_-20.30.30.70.txt",header=TRUE) #fichier d'analogues avec date/dates analogues/distance analogues/correlation analogues
@@ -17,38 +17,40 @@ save(df_ana_20102011,file="./data/df_ana_20102011.txt")
 #dates
 dates <- as.data.frame(df_ana$date)
 colnames(dates) <- c("date")
-save(dates,file="./data/dates_19500101_20210831")
+save(dates,file="./data/dates_19500101_20210831.RData")
 
 ##### Total precipitation data ####
 # yearmean of DJF
-name_tp <- "../../era5_tp_DJF_fr_mean"
-nc_tp <- getNcFile(path,name_tp)  #load file
-date <- c(1950:2021)                #make time vector
-df_tp <- data.frame(cbind(date,as.vector(ncvar_get(nc_tp,"tp"))))  #create data frame
-save(df_tp,file="./data/tp_DJF_19502021_fr.RData")
+df_tp <- read.table("../../Data/Winter/era5_tp_DJFmean_fr.txt",header=FALSE)
+colnames(df_tp) <- c("date","tp")
+df_tp$date <- as.Date(df_tp$date,format="%Y-%m-%d")
+#df_tp$date <- format(as.Date(df_tp$date,format="%Y-%m-%d"),"%Y")
+save(df_tp,file="./data/era5_tp_DJFmean_fr.RData")
 #daily values
-name_tp_daily <- "../../era5_tp_daily_fr"
-nc_tp_daily <- getNcFile(path,name_tp_daily)  #load file
-df_tp_daily <- data.frame(cbind(date=dates,as.vector(ncvar_get(nc_tp_daily,"tp"))))  #create data frame
-save(df_tp_daily,file="./data/tp_daily_fr.RData")
+df_tp_daily <- read.table("../../Data/Winter/era5_tp_daily_fr.txt",header=FALSE)
+colnames(df_tp_daily) <- c("date","tp")
+df_tp_daily$date <- as.Date(df_tp_daily$date,format="%Y-%m-%d")
+save(df_tp_daily,file="./data/era5_tp_daily_fr.RData")
 
 #### Temperature ####
 # yearmean of DJF
-name_t2m <- "../../era5_t2m_DJF_fr_mean"  
-nc_t2m <- getNcFile(path,name_t2m)
-df_t2m <- data.frame(cbind(date,as.vector(ncvar_get(nc_t2m,"t2m"))-273.15)) #data frame de la série temporelle et conversion kelvin <-  celsius
-save(df_t2m,file="./data/t2m_DJF_19502021_fr.RData")
+df_t2m <- read.table("../../Data/Winter/era5_t2m_DJFmean_fr.txt",header=FALSE)
+colnames(df_t2m) <- c("date","t2m")
+#df_t2m$date <- format(as.Date(df_t2m$date,format="%Y-%m-%d"),"%Y")
+df_t2m$date <- as.Date(df_t2m$date,format="%Y-%m-%d")
+df_t2m$t2m <- df_t2m$t2m -273.15
+save(df_t2m,file="./data/era5_t2m_DJFmean_fr.RData")
 #daily values
-name_t2m_daily <- "../../era5_t2m_daily_fr"
-nc_t2m_daily <- getNcFile(path,name_t2m_daily)  #load file
-df_t2m_daily <- data.frame(cbind(date=dates,as.vector(ncvar_get(nc_t2m_daily,"t2m"))-273.15))  #create data frame
-colnames(df_t2m_daily)[[2]] <- "temp"
-save(df_t2m_daily,file="./data/t2m_daily_fr.RData")
+df_t2m_daily <- read.table("../../Data/Winter/era5_t2m_daily_fr.txt",header=FALSE)
+colnames(df_t2m_daily) <- c("date","t2m")
+df_t2m_daily$date <- as.Date(df_t2m_daily$date,format="%Y-%m-%d")
+df_t2m_daily$t2m <- df_t2m_daily$t2m -273.15
+save(df_t2m_daily,file="./data/era5_t2m_daily_fr.RData")
 
 #### GMST ####
 ##### Comparaison avec GMST #####
 data_gmst <- read.table("../../Data/Winter/GMST.dat",fill=TRUE)
-data_gmst <- data_gmst[seq(1, nrow(data_gmst), 2),c(1,14)]
+data_gmst <- data_gmst[seq(1, nrow(data_gmst), 2),c(1,14)]    # pour chaque année sélectionne la première ligne (température) et les première (année) et dernière (moyenne annuelle) colonnes 
 colnames(data_gmst) <- c("date","temp")
 save(data_gmst,file="./data/gmst.RData")
 

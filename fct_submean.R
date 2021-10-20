@@ -17,3 +17,14 @@ ndays_minidx <- function(nDays,path){
   colnames(dfIndex) <- c("date","index")
   return(dfIndex)
 }
+
+#Selection des n plus petites valeurs de variable par group
+select_minvalues <- function(df,variable,group,n=3){
+  variable <- enquo(variable)
+  group <- enquo(group)
+  df_new <- df %>%                                      # Top N lowest values by group
+    arrange(!!variable) %>%
+    group_by(!!group) %>%
+    slice(1:n)
+  return(df_new)
+}

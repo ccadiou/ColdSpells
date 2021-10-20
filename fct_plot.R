@@ -73,3 +73,12 @@ plot_list_obs <- function(df,title="",xlabel="",ylabel=""){
   return(p)
 }
 
+plot_submean <- function(df,title="",xlabel="",ylabel=""){
+  p <- ggplot(df,aes(x=index,y=temp,color=n_days,fill=n_days))+
+    geom_bar(stat="identity",width=10)+
+    scale_x_date(limits=c(as.Date("1949-01-01",format="%Y-%m-%d"),as.Date("2021-02-28",format="%Y-%m-%d")),date_breaks = "5 years", date_minor_breaks = "1 year",date_labels = "%Y")+
+    scale_color_brewer(palette='Set1')+scale_fill_brewer(palette="Set1")
+  return(p)
+}
+  
+  
