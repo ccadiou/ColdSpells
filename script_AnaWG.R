@@ -83,8 +83,10 @@ df_sim_obs$sim <- as.numeric(df_sim_obs$sim)
 df_sim_obs_2 <- df_sim_obs[df_sim_obs$sim<5,]
 
 
+load("../../Data/WEGE_ERA5_2000-2021.RData")
 
 
+load("../../Data/Winter/WEGE_ERA5_1950-2021.Rdat")
 
 
 

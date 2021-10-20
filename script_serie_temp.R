@@ -9,7 +9,7 @@ source("fct_submean.R")
 ###### Load data ######
 path <- "~/Documents/These/Data/Winter/"
 
-#Total precipitation data
+#Total precipitation data 
 t <- c(1950:2021)
 name_tp <- "era5_tp_DJF_fr_mean"
 nc_tp <- getNcFile(path,name_tp)
@@ -43,4 +43,13 @@ df_mindate <- df_mindate[,c(1,3,2,4)]
 save(df_mindate,file="./data/t2m_DJF_minbyperiodduration")
 
 
+#### Corrélation GMST ####
+load("./data/gmst.RData")
+plot_serie_temp(data_gmst)
+df_gmst_t2m <- as.data.frame(cbind(data_gmst[data_gmst$date %in% df_t2m$t,2],df_t2m[,2]))
+colnames(df_gmst_t2m) <- c("GMST","t2m")
+plot_serie_temp(df_gmst_t2m)
+cor(data_gmst[data_gmst$date %in% df_t2m$t,2],df_t2m[,2])
+cor(data_gmst[data_gmst$date %in% df_t2m$t,2],df_t2m[,2])
 
+df_t2m <- df_t2m[t!=1963,]
