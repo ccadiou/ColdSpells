@@ -35,24 +35,34 @@ plot_serie_temp(df_qt5,ylegend ="Ndays with T under 5 percentile")
 ##### Sous-moyenne (max sur 30 jours, 10 jours, 3 jours) #####
 # nd <- 30  #input utilisateur
 # df_t2m$date <- as.Date(df_t2m$date,format="%Y-%m-%d")
-df_t2m$date <- format(df_t2m$date,"%Y")
-colnames(df_t2m)[2] <- "temp"
-# df_t2m$date <- as.numeric(df_t2m$date)
-df_mindate <- rbind(cbind(df_t2m,"n_days"=90,"index"=as.Date(paste(df_t2m$date,"-01-01",sep=""),format="%Y-%m-%d")),
-                    cbind(ndays_min(3,path),"n_days"=3,"index"=ndays_minidx(3,path)[,2]),
-                    cbind(ndays_min(10,path),"n_days"=10,"index"=ndays_minidx(10,path)[,2]),
-                    cbind(ndays_min(30,path),"n_days"=30,"index"=ndays_minidx(30,path)[,2]))
+var="tp"
+if (var=="t2m"){df_var <- df_t2m;var_label <- "Temperature (°C)"}
+if (var=="tp"){df_var <- df_tp;var_label <- "Total precipitation (mm)"}
+df_var$date <- format(df_var$date,"%Y")
+colnames(df_var)[2] <- "temp"
+# df_var$date <- as.numeric(df_var$date)
+df_mindate <- rbind(cbind(ndays_min(30,path,"t2m"),"n_days"=30,"index"=ndays_minidx(30,path,"t2m")[,2]),
+                    cbind(ndays_min(10,path,"t2m"),"n_days"=10,"index"=ndays_minidx(10,path,"t2m")[,2]),
+                    cbind(ndays_min(3,path,"t2m"),"n_days"=3,"index"=ndays_minidx(3,path,"t2m")[,2]),
+                    cbind(df_var,"n_days"=90,"index"=as.Date(paste(df_var$date,"-01-01",sep=""),format="%Y-%m-%d")))
 #df_mindate <- df_mindate[,c(1,3,2,4)]
+# df_mindate$n_days <- as.factor(df_mindate$n_days)
 df_mindate_3min <- select_minvalues(df_mindate,temp,n_days,3)
-df_mindate_3min$n_days <- as.factor(df_mindate_3min$n_days)
+df_mindate_3min <- df_mindate_3min[c(10:12,1:3,4:6,7:9),]
+df_mindate_3min$n_days <- factor(df_mindate_3min$n_days, levels=c(90,30,10,3))
+
 # save(df_mindate,file="./data/t2m_DJF_minbyperiodduration")
-plot_submean(df_mindate_3min)
+plot_submean(df_mindate_3min,xlabel = "Date",ylabel = "Temperature (°C)",legend_title = "Time range\n(days)")
 
 #Sélection des dates du XXIe siècle
 df_mindate_XXI <- df_mindate[df_mindate$date>1999,]
 df_mindate_XXI_3min <- select_minvalues(df_mindate_XXI,temp,n_days,3)
-#plot des dates
+df_mindate_XXI_3min <- df_mindate_XXI_3min[c(10:12,1:3,4:6,7:9),]   #change l'odre des lignes pour que l'affichage se fasse dans le bon ordre lors du plot
+df_mindate_XXI_3min$n_days <- factor(df_mindate_XXI_3min$n_days, levels=c(90,30,10,3))    #change l'ordre des facteurs pour que la légende s'affiche dans le bon ordre
 
+#plot des dates
+df_submeans <- rbind(cbind(df_mindate_XXI_3min,"period"="XXI"),cbind(df_mindate_3min,"period"="XX"))
+plot_submean(df_submeans,xlabel = "Date",ylabel = var_label,legend_title = "Time range\n(days)")
 
 #### Corrélation GMST ####
 load("./data/gmst.RData")
