@@ -74,13 +74,14 @@ plot_list_obs <- function(df,title="",xlabel="",ylabel=""){
 }
 
 plot_submean <- function(df,title="",xlabel="",ylabel="",legend_title=""){
-  p <- ggplot(df,aes(x=index,y=temp,color=n_days,fill=n_days))+
+  p <- ggplot(df,aes(x=index,y=var,color=n_days,fill=n_days))+
     # geom_bar(stat="identity",width=1,alpha=period)+
     geom_col(width=1)+
     scale_x_date(limits=c(as.Date("1949-01-01",format="%Y-%m-%d"),as.Date("2021-02-28",format="%Y-%m-%d")),date_breaks = "5 years", date_minor_breaks = "1 year",date_labels = "%Y")+
     scale_fill_manual(values=c("blue","red","darkgreen","orange"))+scale_color_manual(values=c("blue","red","darkgreen","orange"))+     #palette="Set1"
     scale_alpha_manual(values=c(1,0.5))+
     theme_linedraw()+ labs(title = title, x = xlabel, y = ylabel,color=legend_title,fill=legend_title)
+    # ylim(min(df$var),3.206)
   return(p)
 }
 
