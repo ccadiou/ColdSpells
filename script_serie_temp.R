@@ -35,12 +35,17 @@ plot_serie_temp(df_qt5,ylegend ="Ndays with T under 5 percentile")
 
 
 #### Corrélation GMST ####
-load("./data/gmst.RData")
-plot_serie_temp(data_gmst)
-df_gmst_t2m <- as.data.frame(cbind(data_gmst[data_gmst$date %in% df_t2m$t,2],df_t2m[,2]))
+load("./data/gmst_monthly.RData")
+data_gmst_winter <- data_gmst_monthly[data_gmst_monthly$month < 3 | data_gmst_monthly$month>11,]
+data_gmst_winter[data_gmst_winter$month==12,1] <- data_gmst_winter[data_gmst_winter$month==12,1]+1
+data_gmst_winter_mean <- aggregate(data_gmst_winter$temp, list(data_gmst_winter$year), FUN=mean) 
+colnames(data_gmst_winter_mean) <- c("date","t2m")
+data_gmst_winter_mean <- data_gmst_winter_mean[data_gmst_winter_mean$date<2021,]
+plot_serie_temp(data_gmst_winter_mean)
+
+df_gmst_t2m <- as.data.frame(cbind(data_gmst_winter_mean[data_gmst_winter_mean$date %in% format(df_t2m$date,"%Y"),2],df_t2m[,2]))
 colnames(df_gmst_t2m) <- c("GMST","t2m")
 plot_serie_temp(df_gmst_t2m)
-cor(data_gmst[data_gmst$date %in% df_t2m$t,2],df_t2m[,2])
-cor(data_gmst[data_gmst$date %in% df_t2m$t,2],df_t2m[,2])
+cor(df_gmst_t2m[,1],df_gmst_t2m[,2])
 
 df_t2m <- df_t2m[t!=1963,]

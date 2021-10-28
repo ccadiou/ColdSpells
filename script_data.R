@@ -1,4 +1,5 @@
 library(ncdf4)
+library(reshape2)
 
 source("fct_ncdf.R")
 
@@ -6,7 +7,7 @@ source("fct_ncdf.R")
 path <- "~/Documents/These/Code/Winter/"
 setwd(path)
 
-#### Analogue data ###
+#### Analogue data ####
 df_ana <- read.table("../../Data/Winter/ana_z500_1_-20.30.30.70.txt",header=TRUE) #fichier d'analogues avec date/dates analogues/distance analogues/correlation analogues
 df_ana[, cols <- grep("^date", names(df_ana))] <- lapply(df_ana[, cols <- grep("^date", names(df_ana))],   #conversion des colonnes dates en format date
                                                          function(col) as.Date(as.character(col), format = "%Y%m%d")) 
@@ -48,9 +49,17 @@ df_t2m_daily$t2m <- df_t2m_daily$t2m -273.15
 save(df_t2m_daily,file="./data/era5_t2m_daily_fr.RData")
 
 #### GMST ####
-##### Comparaison avec GMST #####
 data_gmst <- read.table("../../Data/Winter/GMST.dat",fill=TRUE)
-data_gmst <- data_gmst[seq(1, nrow(data_gmst), 2),c(1,14)]    # pour chaque année sélectionne la première ligne (température) et les première (année) et dernière (moyenne annuelle) colonnes 
-colnames(data_gmst) <- c("date","temp")
-save(data_gmst,file="./data/gmst.RData")
+#yearly
+data_gmst_yearly <- data_gmst[seq(1, nrow(data_gmst), 2),c(1,14)]    # pour chaque année sélectionne la première ligne (température) et les première (année) et dernière (moyenne annuelle) colonnes 
+colnames(data_gmst_yearly) <- c("date","temp")
+save(data_gmst_yearly,file="./data/gmst_yearly.RData")
+#monthly
+data_gmst_monthly <- data_gmst[seq(1, nrow(data_gmst), 2),c(1:13)]    # pour chaque année sélectionne la première ligne (température) et les première (année) et dernière (moyenne annuelle) colonnes 
+colnames(data_gmst_monthly) <- c("date",1:12)
+data_gmst_monthly <- melt(data_gmst_monthly, id.vars=c("date"))       # wide to long, mets les mois dans une colonne
+colnames(data_gmst_monthly) <- c("year","month","temp")
+data_gmst_monthly$month <- as.numeric(data_gmst_monthly$month)
+save(data_gmst_monthly,file="./data/gmst_monthly.RData")
+
 
