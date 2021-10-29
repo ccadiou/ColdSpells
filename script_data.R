@@ -32,6 +32,11 @@ df_tp_daily <- read.table("../../Data/Winter/era5_tp_daily_fr.txt",header=FALSE)
 colnames(df_tp_daily) <- c("date","tp")
 df_tp_daily$date <- as.Date(df_tp_daily$date,format="%Y-%m-%d")
 save(df_tp_daily,file="./data/era5_tp_daily_fr.RData")
+#anomalie par point de grille
+df_tp_anomalie <- read.table("../../Data/Winter/era5_tp_DJFmean_fr_anomaliepdg.txt",header=FALSE)
+colnames(df_tp_anomalie) <- c("date","tp")
+df_tp_anomalie$date <- as.Date(df_tp_anomalie$date,format="%Y-%m-%d")
+save(df_tp_anomalie,file="./data/era5_tp_DJFmean_fr_anomaliepdg.RData")
 
 #### Temperature ####
 # yearmean of DJF
@@ -47,6 +52,11 @@ colnames(df_t2m_daily) <- c("date","t2m")
 df_t2m_daily$date <- as.Date(df_t2m_daily$date,format="%Y-%m-%d")
 df_t2m_daily$t2m <- df_t2m_daily$t2m -273.15
 save(df_t2m_daily,file="./data/era5_t2m_daily_fr.RData")
+#anomalie par point de grille
+df_t2m_anomalie <- read.table("../../Data/Winter/era5_t2m_DJFmean_fr_anomaliepdg.txt",header=FALSE)
+colnames(df_t2m_anomalie) <- c("date","t2m")
+df_t2m_anomalie$date <- as.Date(df_t2m_anomalie$date,format="%Y-%m-%d")
+save(df_t2m_anomalie,file="./data/era5_t2m_DJFmean_fr_anomaliepdg.RData")
 
 #### GMST ####
 data_gmst <- read.table("../../Data/Winter/GMST.dat",fill=TRUE)

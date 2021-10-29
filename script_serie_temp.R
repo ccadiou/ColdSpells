@@ -10,10 +10,10 @@ source("fct_submean.R")
 ###### Load data ######
 path <- "~/Documents/These/Data/Winter/"
 
-#Total precipitation data 
-load("./data/era5_tp_DJFmean_fr.RData")
 #Temperature at 2m
 load("./data/era5_t2m_DJFmean_fr.RData")
+#Total precipitation data 
+load("./data/era5_tp_DJFmean_fr.RData")
 
 # df_tp$date <- as.numeric(df_tp$date)
 # df_t2m$date <- as.numeric(df_t2m$date)
@@ -33,7 +33,6 @@ df_qt5$V1 <- as.Date(df_qt5$V1,format="%Y-%m-%d")
 plot_serie_temp(df_qt5,ylegend ="Ndays with T under 5 percentile")
 
 
-
 #### Corrélation GMST ####
 load("./data/gmst_monthly.RData")
 data_gmst_winter <- data_gmst_monthly[data_gmst_monthly$month < 3 | data_gmst_monthly$month>11,]
@@ -43,9 +42,11 @@ colnames(data_gmst_winter_mean) <- c("date","t2m")
 data_gmst_winter_mean <- data_gmst_winter_mean[data_gmst_winter_mean$date<2021,]
 plot_serie_temp(data_gmst_winter_mean)
 
-df_gmst_t2m <- as.data.frame(cbind(data_gmst_winter_mean[data_gmst_winter_mean$date %in% format(df_t2m$date,"%Y"),2],df_t2m[,2]))
+df_t2m_filter <- df_t2m[format(df_t2m$date,"%Y")<2021,]
+df_gmst_t2m <- as.data.frame(cbind(data_gmst_winter_mean[data_gmst_winter_mean$date %in% format(df_t2m_filter$date,"%Y"),2],df_t2m_filter[,2]))
 colnames(df_gmst_t2m) <- c("GMST","t2m")
-plot_serie_temp(df_gmst_t2m)
+plot_serie_temp(df_gmst_t2m,line=FALSE)
 cor(df_gmst_t2m[,1],df_gmst_t2m[,2])
 
-df_t2m <- df_t2m[t!=1963,]
+# En enlevant 1963
+df_t2m_filter <- df_t2m_filter[format(df_t2m_filter$date,"%Y") != 1963,]
