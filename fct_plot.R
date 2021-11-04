@@ -76,9 +76,9 @@ plot_list_obs <- function(df,title="",xlabel="",ylabel=""){
 plot_submean <- function(df,title="",xlabel="",ylabel="",legend_title=""){
   p <- ggplot(df,aes(x=date,y=var,color=n_days,fill=n_days))+
     # geom_bar(stat="identity",width=1,alpha=period)+
-    geom_col(width=0.8)+
+    geom_col(width=0.6,position="identity")+
     # scale_x_date(limits=c(as.Date("1949-01-01",format="%Y-%m-%d"),as.Date("2021-02-28",format="%Y-%m-%d")),date_breaks = "5 years", date_minor_breaks = "1 year",date_labels = "%Y")+
-    scale_x_continuous(breaks = seq(1950,2021,5),minor_breaks = seq(1950, 2021, 1))+
+    scale_x_continuous(limits=c(1950,2021),breaks = seq(1950,2021,5),minor_breaks = seq(1950, 2021, 1))+
     scale_fill_manual(values=c("blue","red","darkgreen","orange"))+scale_color_manual(values=c("blue","red","darkgreen","orange"))+     #palette="Set1"
     scale_alpha_manual(values=c(1,0.5))+
     theme_linedraw()+ labs(title = title, x = xlabel, y = ylabel,color=legend_title,fill=legend_title)
@@ -86,7 +86,7 @@ plot_submean <- function(df,title="",xlabel="",ylabel="",legend_title=""){
   return(p)
 }
 
-plot_submean_group <- function(df,title="",xlabel="",ylabel="",legend_title=""){
+plot_submean_group <- function(df,title="",xlabel="",ylabel="",legend_title=""){ # à mettre à jour
   p <- ggplot(df,aes(x=index,y=var,color=n_days,fill=n_days,group=var_name))+
     # geom_bar(stat="identity",width=1,alpha=period)+
     geom_col(width=1)+
