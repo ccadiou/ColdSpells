@@ -43,11 +43,9 @@ plot_nc_raster_from_file <- function(path,fname,varname,varmin,varmax){
   require(maptools) # for adding countries
   #load data
   nc_data <- nc_open(paste(path,fname,sep=""))
-  
   #get variables
   lon <- ncvar_get(nc_data, "lon")
-  lat <- ncvar_get(nc_data, "lat", verbose = F)
-  t <- ncvar_get(nc_data, "time")
+  lat <- ncvar_get(nc_data, "lat", verbose = F)   #not suitable to file with timesteps
   nc.array <- ncvar_get(nc_data, varname) # store the data in a 3-dimensional array
   nc_close(nc_data) 
   
@@ -61,7 +59,7 @@ plot_nc_raster_from_file <- function(path,fname,varname,varmin,varmax){
   # [1] "1956-02-09_1956-02-19"
   plot(r,col=colorRampPalette(colors=c('#053061','#2166ac','#4393c3','#92c5de','#d1e5f0','#f7f7f7',
                                                         '#fddbc7','#f4a582','#d6604d','#b2182b','#67001f'))(255),
-       zlim=c(varmin,varmax), legend=FALSE,main=substr(fname,6,34))
+       zlim=c(varmin,varmax), legend=FALSE,main=substr(fname,6,34),useRaster=FALSE)
   rgeos::set_RGEOS_CheckValidity(2L)
   data(wrld_simpl, package="maptools")
   eu_simpl <- crop(wrld_simpl,extent(min(lon),max(lon),ymn=min(lat),ymx=max(lat)))  #for countries borders
