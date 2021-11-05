@@ -57,7 +57,7 @@ plot(wrld_simpl, add = TRUE)
 # dev.off()
 p
 
-###### raster plot avec interpolation __________________________________________________________________________________________________________________####
+###### raster plot avec ou sans interpolation __________________________________________________________________________________________________________________####
 library(ncdf4) # package for netcdf manipulation
 library(raster) # package for raster manipulation
 library(ggplot2) # package for plotting
@@ -68,50 +68,92 @@ library(rgdal)
 
 ncpath <- "~/Documents/These/Data/Winter/submeans_z500/"
 ncnames <- list.files(ncpath)
+ncnames <- ncnames[c(4:6,1:3,7:12)]
 nc_arrays <- lapply(ncnames,function(f) nc_to_array(ncpath,f,"z500"))
-par(mfrow=c(4,3))
 zmin <- min(unlist(nc_arrays))
 zmax <- max(unlist(nc_arrays))
+
+#multiplot de toutes les cartes z500
+dev.off()
+par(mfrow=c(4,3),mar=c(3,3,1,1))
 plot_list <- lapply(ncnames,function(f) plot_nc_raster_from_file(ncpath,f,"z500",zmin,zmax))
-plot_nc_raster_from_file(ncpath,"era5_z500_10_1956-02-09_1956-02-19.nc","z500",50000,55000,legend=FALSE)
+
+## test
+dev.off()
+par(mfrow=c(4,3))#,mar=c(0.5,0.5,1,1))
+plot_list <- lapply(ncnames,function(f) plot_nc_raster_from_file(ncpath,f,"z500",zmin,zmax))
+dev.off()
+plot_nc_raster_from_file(ncpath,"era5_z500_10_1956-02-09_1956-02-19.nc","z500",zmin,zmax)
+
+x<-1:10
+par(mar=c(2.5,2.5,1,1))
+layout(matrix(c(1,2,3,4,1,5,3,6),ncol=2),heights=c(1,3,1,3))
+plot.new()
+text(0.5,0.5,"First title",cex=2,font=2)
+plot(x)
+plot.new()
+text(0.5,0.5,"Second title",cex=2,font=2)
+hist(x)
+boxplot(x)
+barplot(x)
 
 
 #project lcc
-crs.lcc <- CRS("+proj=lcc +lat_1=12.190 +lat_0=40 
-               +lon_0=-97 +lat_2=45
-               +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
-
-# reproject to lcc
-rast.ext <- projectExtent(r, crs.lcc)
-rast.lcc <- projectRaster(r, rast.ext)
-#world spatial polygons
-world <- map(fill = TRUE, col="transparent", plot=FALSE)
-IDs <- sapply(strsplit(world$names, ":"), function(x) x[1])
-world <- map2SpatialPolygons(
-  world, IDs=IDs, proj4string=CRS("+proj=longlat +datum=WGS84"))
-world.lcc <- spTransform(world, CRSobj = crs.lcc)
+# crs.lonlat <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs") # +lat_1=12.190 +lat_0=40 +lon_0=-97 +lat_2=45
+# 
+# # reproject to lcc
+# rast.ext <- projectExtent(r, crs.lonlat)
+# rast.lonlat <- projectRaster(r, rast.ext)
+# #world spatial polygons
+# world <- map(fill = TRUE, col="transparent", plot=FALSE)
+# IDs <- sapply(strsplit(world$names, ":"), function(x) x[1])
+# world <- map2SpatialPolygons(
+#   world, IDs=IDs, proj4string=CRS("+proj=longlat +datum=WGS84"))
+# world.lonlat <- spTransform(world, CRSobj = crs.lcc)
 
 #
+test <- raster(paste(ncpath,"era5_z500_10_1956-02-09_1956-02-19.nc",sep=""),varname="z500")
+plot(test)
+rgeos::set_RGEOS_CheckValidity(2L)
+eu <- crop(wrld_simpl,extent(-20,30,30,70))
+
 nc_data <- nc_open(paste(ncpath,"era5_z500_10_1956-02-09_1956-02-19.nc",sep=""))
 
 #get variables
 lon <- ncvar_get(nc_data, "lon")
 lat <- ncvar_get(nc_data, "lat", verbose = F)
-t <- ncvar_get(nc_data, "time")
+time <- ncvar_get(nc_data, "time")
 nc.array <- ncvar_get(nc_data, "z500") # store the data in a 3-dimensional array
 nc_close(nc_data) 
 
 #convert to raster ,nrows=max(lon)-min(lon)+1, ncols=max(lat)-min(lat)+1
 crs.lcc <- CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
-r <- raster(t(nc.array), xmn=min(lon), xmx=max(lon), ymn=min(lat), ymx=max(lat), crs=crs.latlon)#CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"))# +no_defs+ towgs84=0,0,0"))
+r <- raster(t(nc.array), xmn=min(lon), xmx=max(lon), ymn=min(lat), ymx=max(lat), CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")) #crs=crs.latlon)
 r <- flip(r, direction='y')
 #plot
-
+dev.off()
+plot(r)
+# r_test <- projectRaster(r,crs=crs(wrld_simpl),res=1)
 plot(r,col=colorRampPalette(colors=c('#053061','#2166ac','#4393c3','#92c5de','#d1e5f0','#f7f7f7',
                                      '#fddbc7','#f4a582','#d6604d','#b2182b','#67001f'))(255),
      zlim=c(zmin,zmax), legend=FALSE)
 # map(add=TRUE)
-plot(world.lcc, add = TRUE)
+# plot(world.lcc, add = TRUE)
+
+rgeos::set_RGEOS_CheckValidity(2L)
+data(wrld_simpl, package="maptools")
+eu_simpl <- crop(wrld_simpl,extent(-20,30,30,70))
+plot(eu_simpl,add=TRUE)
+# worldmap <- fortify(wrld_simpl)
+
+## Load raster package and an example SpatialPolygonsDataFrame
+library(raster) 
+rgeos::set_RGEOS_CheckValidity(2L)
+data("wrld_simpl", package="maptools")
+
+## Crop to the desired extent, then plot
+out <- crop(wrld_simpl, extent(-20,30,30,70))
+plot(out)#, col="khaki", bg="azure2")
 
 ##### ggplot2, interpolation en amont__________________________________________________________________________________________________________________________________####
 
