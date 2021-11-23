@@ -37,10 +37,11 @@ plot_2y <- function(df1,df2,factor,title="",xlegend="",ylegend1="",ylegend2=""){
 plot_box <- function(df,dfval,title="",xlabel="",ylabel=""){
   p <- ggplot(df, aes(x=factor(0),y)) + 
     geom_boxplot()+
-    expand_limits(y=0)+
+    # expand_limits(y=0)+
     stat_summary(fun=mean, geom="point",shape=18, size=3)+
     labs(title = title, x = xlabel, y = ylabel)+
     theme_classic()+
+    scale_y_continuous(limits=c(0.5,7))+
     geom_point(data=dfval,color="red2")
   return(p)
 }
@@ -86,6 +87,17 @@ plot_submean <- function(df,title="",xlabel="",ylabel="",legend_title=""){
   return(p)
 }
 
+plot_submean_bubble <- function(df,title="",xlabel="",ylabel="",legend_title=""){
+  df$n_days <- factor(df$n_days, levels=c(3,10,30,90))
+  ggplot(df, aes(x=date, y=var, size = n_days,color=n_days)) +
+    geom_point(alpha=0.8)+
+    # scale_color_manual(values=c("blue","red","green","orange"))+
+    # scale_color_brewer(palette="Blues")+
+    scale_color_gradient(high="darkblue",low="deepskyblue")+
+    theme_linedraw()+ labs(title = title, x = xlabel, y = ylabel,color=legend_title,size=legend_title)
+}
+  
+
 plot_submean_group <- function(df,title="",xlabel="",ylabel="",legend_title=""){ # à mettre à jour
   p <- ggplot(df,aes(x=index,y=var,color=n_days,fill=n_days,group=var_name))+
     # geom_bar(stat="identity",width=1,alpha=period)+
@@ -107,6 +119,7 @@ plot_submean_group <- function(df,title="",xlabel="",ylabel="",legend_title=""){
 # If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
 # then plot 1 will go in the upper left, 2 will go in the upper right, and
 # 3 will go all the way across the bottom.
+
 #
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   library(grid)

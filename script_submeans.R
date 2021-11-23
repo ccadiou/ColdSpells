@@ -36,7 +36,7 @@ df_extdate <- rbind(cbind(ndays_min(30,path,var,extreme),"n_days"=30,"index"=nda
                     cbind(ndays_min(3,path,var,extreme),"n_days"=3,"index"=ndays_minidx(3,path,var,extreme)[,2]),
                     cbind(df_var,"n_days"=90,"index"=as.Date(paste(df_var$date,"-01-01",sep=""),format="%Y-%m-%d")))
 df_extdate_3 <- select_extremes(df_extdate,var,n_days,extreme,10)
-df_extdate_3 <- df_extdate_3[c(10:12,1:3,4:6,7:9),]
+# df_extdate_3 <- df_extdate_3[c(10:12,1:3,4:6,7:9),]
 df_extdate_3$n_days <- factor(df_extdate_3$n_days, levels=c(90,30,10,3))
 
 #plot
@@ -46,12 +46,18 @@ plot_submean(df_extdate_3,xlabel = "Date",ylabel = var_label,legend_title = "Tim
  # save(df_extdate3,file="./data/t2m_DJF_minbyperiodduration")
 df_extdate_3$n_days <- as.numeric(as.character(df_extdate_3$n_days))
 # write.table(df_extdate_3,"./data/t2m_DJF_minbyrange.txt",sep="\t",row.names=FALSE)
+
+plot_submean_bubble(df_extdate_3,xlabel = "Date",ylabel = var_label,legend_title = "Time range\n(days)")
+
+
+
+
 #multiplot t2m et tp
 # p_tp <- plot_submean(df_extdate_3,xlabel = "Date",ylabel = var_label,legend_title = "Time range\n(days)")
 # p_t2m <- plot_submean(df_extdate_3,xlabel = "Date",ylabel = var_label,legend_title = "Time range\n(days)")
 # multiplot(p_tp, p_t2m,cols=1)
 
-### Sur le période 2000-2021 ###
+#### Sur le période 2000-2021 ####
 df_extdate_XXI <- df_extdate[df_extdate$date>1999,]
 df_extdate_XXI_3 <- select_extremes(df_extdate_XXI,var,n_days,extreme,3)
 df_extdate_XXI_3 <- df_extdate_XXI_3[c(10:12,1:3,4:6,7:9),]   #change l'odre des lignes pour que l'affichage se fasse dans le bon ordre lors du plot
@@ -69,7 +75,7 @@ df_t2m_ext3 <- df_submeans
 df_tp_t2m_ext3 <- rbind(cbind(df_t2m_ext3,"var_name"="t2m"),cbind(df_tp_ext3,"var_name"="tp"))
 plot_submean_group(df_tp_t2m_ext3,xlabel = "Date",ylabel = var_label,legend_title = "Time range\n(days)")
 #_____________________________________________________________________________________________________________________
-##### Sous-moyennes à parti de l'anomalie par point de grille
+##### Sous-moyennes à parti de l'anomalie par point de grille #####
 df_extdate <- rbind(cbind(ndays_min(30,path,var,extreme,anomalie=TRUE),"n_days"=30,"index"=ndays_minidx(30,path,var,extreme,anomalie=TRUE)[,2]),
                     cbind(ndays_min(10,path,var,extreme,anomalie=TRUE),"n_days"=10,"index"=ndays_minidx(10,path,var,extreme,anomalie=TRUE)[,2]),
                     cbind(ndays_min(3,path,var,extreme,anomalie=TRUE),"n_days"=3,"index"=ndays_minidx(3,path,var,extreme,anomalie=TRUE)[,2]),
