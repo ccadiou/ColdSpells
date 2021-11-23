@@ -58,6 +58,27 @@ colnames(df_t2m_anomalie) <- c("date","t2m")
 df_t2m_anomalie$date <- as.Date(df_t2m_anomalie$date,format="%Y-%m-%d")
 save(df_t2m_anomalie,file="./data/era5_t2m_DJFmean_fr_anomaliepdg.RData")
 
+#### Snowfall ####
+# yearmean of DJF
+df_sf <- read.table("../../Data/Winter/era5_sf_DJFmean_fr.txt",header=FALSE)
+colnames(df_sf) <- c("date","sf")
+#df_sf$date <- format(as.Date(df_sf$date,format="%Y-%m-%d"),"%Y")
+df_sf$date <- as.Date(df_sf$date,format="%Y-%m-%d")
+df_sf$sf <- df_sf$sf*1000             # convert from m to mm
+save(df_sf,file="./data/era5_sf_DJFmean_fr.RData")
+#daily values
+df_sf_daily <- read.table("../../Data/Winter/era5_sf_DJF_daily_fr.txt",header=FALSE)
+colnames(df_sf_daily) <- c("date","sf")
+df_sf_daily$date <- as.Date(df_sf_daily$date,format="%Y-%m-%d")
+df_sf_daily$sf <- df_sf_daily$sf*1000
+save(df_sf_daily,file="./data/era5_sf_daily_fr.RData")
+#anomalie par point de grille
+df_sf_anomalie <- read.table("../../Data/Winter/era5_sf_DJFmean_fr_anomaliepdg.txt",header=FALSE)
+colnames(df_sf_anomalie) <- c("date","sf")
+df_sf_anomalie$date <- as.Date(df_sf_anomalie$date,format="%Y-%m-%d")
+df_sf_anomalie$sf <- df_sf_anomalie$sf*1000
+save(df_sf_anomalie,file="./data/era5_sf_DJFmean_fr_anomaliepdg.RData")
+
 #### GMST ####
 data_gmst <- read.table("../../Data/Winter/GMST.dat",fill=TRUE)
 #yearly

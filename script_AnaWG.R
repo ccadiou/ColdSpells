@@ -42,7 +42,7 @@ colnames(simu.dyn.1962.3.Tmean) <- c("nsim","y")
 #### 1962 - alpha.cal=6 ####
 load("../../Data/Winter/TG-France-Y1962m12d1_HW-animpsa_cal6_TG0meth1-860981.Rdat")
 simu.dyn.1962.6 <-  adply(simu.dyn$l.X$`1962`, 1)
-simu.dyn.1962.6$t.sim <- as.Date(as.character(simu.dyn.1966.6$t.sim),format="%Y%m%d")
+simu.dyn.1962.6$t.sim <- as.Date(as.character(simu.dyn.1962.6$t.sim),format="%Y%m%d")
 
 simu.dyn.1962.6.Xmean <- as.data.frame(adply(simu.dyn$l.X.mean$`1962`,1))
 colnames(simu.dyn.1962.6.Xmean) <- c("nsim","y")
@@ -54,5 +54,5 @@ p1 <- plot_box(simu.dyn.2010.3.Xmean,dfval=simu.dyn.2010.3.Tmean,title="2010 - a
 p2 <- plot_box(simu.dyn.2010.6.Xmean,dfval=simu.dyn.2010.6.Tmean,title="2010 - alpha.cal=6")
 p3 <- plot_box(simu.dyn.1962.3.Xmean,dfval=simu.dyn.1962.3.Tmean,title="1962 - alpha.cal=3")
 p4 <- plot_box(simu.dyn.1962.6.Xmean,dfval=simu.dyn.1962.6.Tmean,title="1962 - alpha.cal=6")
-grid.arrange(p1, p1, p3, p4, ncol=2, nrow = 2)
+grid.arrange(p1, p2, p3, p4, ncol=2, nrow = 2)
 

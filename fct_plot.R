@@ -89,26 +89,18 @@ plot_submean <- function(df,title="",xlabel="",ylabel="",legend_title=""){
 
 plot_submean_bubble <- function(df,title="",xlabel="",ylabel="",legend_title=""){
   df$n_days <- factor(df$n_days, levels=c(3,10,30,90))
+  cc <- scales::seq_gradient_pal("steelblue1","darkblue","Lab")(seq(0,1,length.out=4))
   ggplot(df, aes(x=date, y=var, size = n_days,color=n_days)) +
     geom_point(alpha=0.8)+
-    # scale_color_manual(values=c("blue","red","green","orange"))+
+    scale_x_continuous(limits=c(1950,2021),breaks = seq(1950,2021,5),minor_breaks = seq(1950, 2021, 1))+
+    scale_size_manual(values=c(3,6,9,12))+
     # scale_color_brewer(palette="Blues")+
-    scale_color_gradient(high="darkblue",low="deepskyblue")+
+    scale_color_manual(values=c("blue","red","green4","orange"))+
+    # scale_color_manual(values=cc)+
+    scale_y_continuous(labels = scales::number_format(accuracy = 0.01))+
     theme_linedraw()+ labs(title = title, x = xlabel, y = ylabel,color=legend_title,size=legend_title)
 }
-  
 
-plot_submean_group <- function(df,title="",xlabel="",ylabel="",legend_title=""){ # à mettre à jour
-  p <- ggplot(df,aes(x=index,y=var,color=n_days,fill=n_days,group=var_name))+
-    # geom_bar(stat="identity",width=1,alpha=period)+
-    geom_col(width=1)+
-    scale_x_date(limits=c(as.Date("1949-01-01",format="%Y-%m-%d"),as.Date("2021-02-28",format="%Y-%m-%d")),date_breaks = "5 years", date_minor_breaks = "1 year",date_labels = "%Y")+
-    scale_fill_manual(values=c("blue","red","darkgreen","orange"))+scale_color_manual(values=c("blue","red","darkgreen","orange"))+     #palette="Set1"
-    scale_alpha_manual(values=c(1,0.5))+
-    theme_linedraw()+ labs(title = title, x = xlabel, y = ylabel,color=legend_title,fill=legend_title)
-  # ylim(min(df$var),3.206)
-  return(p)
-}
 
 # Multiple plot function
 #
