@@ -45,6 +45,7 @@ colnames(df_t2m) <- c("date","t2m")
 #df_t2m$date <- format(as.Date(df_t2m$date,format="%Y-%m-%d"),"%Y")
 df_t2m$date <- as.Date(df_t2m$date,format="%Y-%m-%d")
 df_t2m$t2m <- df_t2m$t2m -273.15
+df_t2m <- df_t2m[df_t2m$date>"1950-11-01",]
 save(df_t2m,file="./data/era5_t2m_DJFmean_fr.RData")
 #daily values
 df_t2m_daily <- read.table("../../Data/Winter/era5_t2m_daily_fr.txt",header=FALSE)

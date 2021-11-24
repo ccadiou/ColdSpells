@@ -1,15 +1,14 @@
-plot_serie_temp <- function(df,title="",xlegend="",ylegend="",line=TRUE){
+plot_serie_temp <- function(df,title="",xlegend="",ylegend="",line=TRUE,date_low="1949-01-01",date_high="2021-03-01"){
   p <- ggplot(df,aes(x=df[,1],y=df[,2]))
   if (line) {p <- p+geom_line()}
   return(
     p + geom_point(shape = 19, aes(color="")) +
       scale_color_manual(values = c("black")) +
-      labs(
-        titles = title,
-        x = xlegend,y = ylegend
-      ) +
+      labs(titles = title,x = xlegend,y = ylegend) +
       # theme_classic()+
-      theme(legend.position = "None",legend.title = element_blank())
+      theme_linedraw()+
+      theme(legend.position = "None",legend.title = element_blank())+
+      scale_x_date(date_breaks = "5 year",date_minor_breaks = "1 year",date_labels = "%Y",limits=c(as.Date(date_low),as.Date(date_high)))
   )
 }
 
