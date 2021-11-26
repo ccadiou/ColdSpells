@@ -58,6 +58,27 @@ df_t2m_anomalie <- read.table("../../Data/Winter/era5_t2m_DJFmean_fr_anomaliepdg
 colnames(df_t2m_anomalie) <- c("date","t2m")
 df_t2m_anomalie$date <- as.Date(df_t2m_anomalie$date,format="%Y-%m-%d")
 save(df_t2m_anomalie,file="./data/era5_t2m_DJFmean_fr_anomaliepdg.RData")
+#sous-moyennes sur 3, 10, 30et 90 jours
+for (n in c(3,10,30)) {
+  name <- paste("df_t2m_",n,"submean",sep="")
+  assign(name, read.table(paste("../../Data/Winter/era5_t2m_DJF_",n,"min.txt",sep="")))
+}
+colnames(df_t2m_3submean) <- c("date","t2m")
+colnames(df_t2m_10submean) <- c("date","t2m")
+colnames(df_t2m_30submean) <- c("date","t2m")
+df_t2m_3submean$date <- as.Date(df_t2m_3submean$date,format="%Y-%m-%d")
+df_t2m_10submean$date <- as.Date(df_t2m_10submean$date,format="%Y-%m-%d")
+df_t2m_30submean$date <- as.Date(df_t2m_30submean$date,format="%Y-%m-%d")
+df_t2m_3submean$t2m <- df_t2m_3submean$t2m-273.15
+df_t2m_10submean$t2m <- df_t2m_10submean$t2m-273.15
+df_t2m_30submean$t2m <- df_t2m_30submean$t2m-273.15
+df_t2m_3submean <- df_t2m_3submean[df_t2m_3submean$date>"1950-11-01",]
+df_t2m_10submean <- df_t2m_10submean[df_t2m_10submean$date>"1950-11-01",]
+df_t2m_30submean <- df_t2m_30submean[df_t2m_30submean$date>"1950-11-01",]
+save(df_t2m_3submean,file="./data/era5_t2m_DJF3mean.RData")
+save(df_t2m_10submean,file="./data/era5_t2m_DJF10mean.RData")
+save(df_t2m_30submean,file="./data/era5_t2m_DJF30mean.RData")
+
 
 #### Snowfall ####
 # yearmean of DJF

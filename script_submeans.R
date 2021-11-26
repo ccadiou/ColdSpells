@@ -1,6 +1,7 @@
 library(ggplot2)
 library(lubridate)
 library(dplyr)
+library(gridExtra)
 
 source("fct_plot.R")
 source("fct_ncdf.R")
@@ -23,7 +24,7 @@ load("./data/era5_sf_DJFmean_fr_anomaliepdg.RData")
 #_________________________________________________________________________________________________________
 ###### Sous-moyenne (max sur 30 jours, 10 jours, 3 jours) ######
 ## Sélection de la variable
-var <- "sf"
+var <- "t2m"
 n <- 10
 if (var=="t2m"){df_var <- df_t2m;df_var_anomalie <- df_t2m_anomalie;var_label <- "Temperature (°C)";extreme <- "min"}
 if (var=="tp"){df_var <- df_tp;df_var_anomalie <- df_tp_anomalie;var_label <- "Total precipitation (mm)";extreme <- "max"}
@@ -48,7 +49,7 @@ df_extdate_n$n_days <- factor(df_extdate_n$n_days, levels=c(3,10,30,90))
 df_extdate_n$date <- as.numeric(as.character(df_extdate_n$date))
 # plot_submean(df_extdate_n,xlabel = "Date",ylabel = var_label,legend_title = "Time range\n(days)")
 df_extdate_n$n_days <- as.numeric(as.character(df_extdate_n$n_days))
-write.table(df_extdate_n,paste("./data/",var,"_DJF_minbyrange.txt",sep=""),sep="\t",row.names=FALSE)
+# write.table(df_extdate_n,paste("./data/",var,"_DJF_minbyrange.txt",sep=""),sep="\t",row.names=FALSE)
 
 
 plot_submean_bubble(df_extdate_n,xlabel = "Date",ylabel = var_label,legend_title = "Time range\n(days)")

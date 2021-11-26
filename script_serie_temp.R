@@ -1,7 +1,8 @@
-library(ncdf4)
 library(ggplot2)
 library(lubridate)
 library(dplyr)
+library(gridExtra)
+
 
 source("fct_plot.R")
 source("fct_ncdf.R")
@@ -19,11 +20,21 @@ load("./data/era5_tp_DJFmean_fr.RData")
 # df_t2m$date <- as.numeric(df_t2m$date)
 
 #plot
-plot_serie_temp(df_tp,ylegend = "Total precipitation [mm]")
-plot_serie_temp(df_t2m,ylegend = "2m temperature [°C]")
+plot_serie_temp(df_tp,ylegend = "Total precipitation (mm)")
+plot_serie_temp(df_t2m,ylegend = "2m temperature (°C)")
 
 plot_2y(df_t2m,df_tp,max(df_tp[,2])/max(df_t2m[,2]),title = "DJF mean - France",
-        xlegend = "Time",ylegend1="2m temperature [°C]",ylegend2="Total precipiat ion [mm]")
+        xlegend = "Time",ylegend1="2m temperature (°C)",ylegend2="Total precipiation (mm)")
+
+##### Sous-moyennes #####
+load("./data/era5_t2m_DJF3mean.RData")
+load("./data/era5_t2m_DJF10mean.RData")
+load("./data/era5_t2m_DJF30mean.RData")
+p3 <- plot_serie_temp(df_t2m_3submean,ylegend = "2m temperature (°C)")
+p10 <- plot_serie_temp(df_t2m_10submean,ylegend = "2m temperature (°C)")
+p30 <- plot_serie_temp(df_t2m_30submean,ylegend = "2m temperature (°C)")
+p90 <- plot_serie_temp(df_t2m,ylegend = "2m temperature (°C)")
+grid.arrange(p3,p10,p30,p90, ncol=2, nrow = 2)
 
 ##### Quantiles #####
 name_qt <- "era5_t2m_DJF_sum5pctl_ymean.txt"

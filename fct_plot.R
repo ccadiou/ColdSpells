@@ -1,4 +1,4 @@
-plot_serie_temp <- function(df,title="",xlegend="",ylegend="",line=TRUE,date_low="1949-01-01",date_high="2021-03-01"){
+plot_serie_temp <- function(df,title="",xlegend="",ylegend="",line=TRUE,date_low="1944-02-14",date_high="2023-02-14"){
   p <- ggplot(df,aes(x=df[,1],y=df[,2]))
   if (line) {p <- p+geom_line()}
   return(
@@ -8,7 +8,9 @@ plot_serie_temp <- function(df,title="",xlegend="",ylegend="",line=TRUE,date_low
       # theme_classic()+
       theme_linedraw()+
       theme(legend.position = "None",legend.title = element_blank())+
-      scale_x_date(date_breaks = "5 year",date_minor_breaks = "1 year",date_labels = "%Y",limits=c(as.Date(date_low),as.Date(date_high)))
+      scale_x_date(date_breaks = "10 year",date_minor_breaks = "1 year",date_labels = "%Y",limits=c(as.Date(date_low),as.Date(date_high)))+
+      scale_y_continuous(breaks=seq(floor(min(df[,2])),ceiling(max(df[,2])),by=1),minor_breaks = seq(floor(min(df[,2])),ceiling(max(df[,2])),by=0.5),
+                         limits=c(floor(min(df[,2])),ceiling(max(df[,2]))))
   )
 }
 
@@ -92,11 +94,11 @@ plot_submean_bubble <- function(df,title="",xlabel="",ylabel="",legend_title="")
   ggplot(df, aes(x=date, y=var, size = n_days,color=n_days)) +
     geom_point(alpha=0.8)+
     scale_x_continuous(limits=c(1950,2021),breaks = seq(1950,2021,5),minor_breaks = seq(1950, 2021, 1))+
-    scale_size_manual(values=c(3,6,9,12))+
+    scale_size_manual(values=c(1,3,5,7))+
     # scale_color_brewer(palette="Blues")+
     scale_color_manual(values=c("blue","red","green4","orange"))+
     # scale_color_manual(values=cc)+
-    scale_y_continuous(labels = scales::number_format(accuracy = 0.01))+
+    scale_y_continuous(labels = scales::number_format(accuracy = 0.1))+
     theme_linedraw()+ labs(title = title, x = xlabel, y = ylabel,color=legend_title,size=legend_title)
 }
 
