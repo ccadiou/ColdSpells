@@ -1,7 +1,8 @@
 library(ggplot2)
 library(lubridate)
 library(dplyr)
-library(gridExtra)
+library(gridExtra)  # grid.arrange function for pultiplot
+library(ggpubr)     # ggarange function for multiplot
 
 
 source("fct_plot.R")
@@ -21,7 +22,7 @@ load("./data/era5_tp_DJFmean_fr.RData")
 
 #plot
 plot_serie_temp(df_tp,ylegend = "Total precipitation (mm)")
-plot_serie_temp(df_t2m,ylegend = "2m temperature (°C)")
+plot_serie_temp(df_t2m,ylegend = "2m temperature (°C)",trend=TRUE,date_low=as.Date("1949-01-01"),date_high=as.Date("2021-03-01"),n.breaks=5)
 
 plot_2y(df_t2m,df_tp,max(df_tp[,2])/max(df_t2m[,2]),title = "DJF mean - France",
         xlegend = "Time",ylegend1="2m temperature (°C)",ylegend2="Total precipiation (mm)")
@@ -34,7 +35,23 @@ p3 <- plot_serie_temp(df_t2m_3submean,ylegend = "2m temperature (°C)")
 p10 <- plot_serie_temp(df_t2m_10submean,ylegend = "2m temperature (°C)")
 p30 <- plot_serie_temp(df_t2m_30submean,ylegend = "2m temperature (°C)")
 p90 <- plot_serie_temp(df_t2m,ylegend = "2m temperature (°C)")
-grid.arrange(p3,p10,p30,p90, ncol=2, nrow = 2)
+# grid.arrange(p90,p30,p10,p3, ncol=2, nrow = 2)
+ggarrange(p90,p30,p10,p3, ncol = 2, nrow=2, labels = c("a)","b)","c)","d)"))
+
+#Histogramme
+plot_histo(df_t2m,xlegend="Temperature (C°)",y.n.breaks=11,y.expand=c(0,0),y.limits=c(0,11))
+
+t2m_sans1963 <- df_t2m[format(df_t2m$date,"%Y")!=1963,2]
+t2m_1963 <- df_t2m[format(df_t2m$date,"%Y")==1963,2]
+library(fitdistrplus)
+FIT <- fitdist(t2m_sans1963, "norm")    ## note: it is "norm" not "normal"
+class(FIT)
+# [1] "fitdist"
+
+plot(FIT)
+
+n_sd_1963 <- (FIT$estimate[[1]]-t2m_1963)/FIT$estimate[[2]]
+n_sd_1963
 
 ##### Quantiles #####
 name_qt <- "era5_t2m_DJF_sum5pctl_ymean.txt"

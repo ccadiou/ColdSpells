@@ -1,6 +1,7 @@
-plot_serie_temp <- function(df,title="",xlegend="",ylegend="",line=TRUE,date_low="1944-02-14",date_high="2023-02-14"){
+plot_serie_temp <- function(df,title="",xlegend="",ylegend="",line=TRUE,date_low="1944-02-14",date_high="2023-02-14",trend=FALSE,n.breaks=10){
   p <- ggplot(df,aes(x=df[,1],y=df[,2]))
   if (line) {p <- p+geom_line()}
+  if (trend) {p <- p+geom_smooth(method=lm,se=FALSE)}
   return(
     p + geom_point(shape = 19, aes(color="")) +
       scale_color_manual(values = c("black")) +
@@ -8,11 +9,12 @@ plot_serie_temp <- function(df,title="",xlegend="",ylegend="",line=TRUE,date_low
       # theme_classic()+
       theme_linedraw()+
       theme(legend.position = "None",legend.title = element_blank())+
-      scale_x_date(date_breaks = "10 year",date_minor_breaks = "1 year",date_labels = "%Y",limits=c(as.Date(date_low),as.Date(date_high)))+
+      scale_x_date(date_breaks = paste(n.breaks," year",sep=""),date_minor_breaks = "1 year",date_labels = "%Y",limits=c(as.Date(date_low),as.Date(date_high)))+
       scale_y_continuous(breaks=seq(floor(min(df[,2])),ceiling(max(df[,2])),by=1),minor_breaks = seq(floor(min(df[,2])),ceiling(max(df[,2])),by=0.5),
                          limits=c(floor(min(df[,2])),ceiling(max(df[,2]))))
   )
 }
+
 
 plot_2y <- function(df1,df2,factor,title="",xlegend="",ylegend1="",ylegend2=""){
   p <- ggplot()
@@ -31,6 +33,18 @@ plot_2y <- function(df1,df2,factor,title="",xlegend="",ylegend1="",ylegend2=""){
             axis.title.y.right=element_text(colour="blue"),
             axis.text.y.right=element_text(colour="blue"),
             legend.position = "None",legend.title = element_blank())
+  )
+}
+
+plot_histo <- function(df,title="",xlegend="",ylegend="",y.n.breaks=NULL,y.expand=c(0.05,0),y.limits=NULL){
+  p <- ggplot(df,aes(x=df[,2]))
+  return(
+    p + geom_histogram(color="black", fill="snow3") +
+      labs(titles = title,x = xlegend,y = ylegend) +
+      theme_linedraw()+
+      theme(legend.position = "None",legend.title = element_blank())+
+      scale_x_continuous(breaks=seq(floor(min(df[,2])),ceiling(max(df[,2],by=1))))+
+      scale_y_continuous(n.breaks=y.n.breaks,minor_breaks = NULL,expand=y.expand,limits=y.limits)
   )
 }
 
