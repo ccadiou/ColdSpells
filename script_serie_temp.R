@@ -23,6 +23,10 @@ load("./data/era5_tp_DJFmean_fr.RData")
 #plot
 plot_serie_temp(df_tp,ylegend = "Total precipitation (mm)")
 plot_serie_temp(df_t2m,ylegend = "2m temperature (°C)",trend=TRUE,date_low=as.Date("1949-01-01"),date_high=as.Date("2021-03-01"),n.breaks=5)
+#calcul du coefficient directuer de la regréssion
+# df_t2m_year <- df_t2m
+# df_t2m_year$date <- as.numeric(format(df_t2m$date,"%Y"))
+# lm(df_t2m_year$t2m~df_t2m_year$date)
 
 plot_2y(df_t2m,df_tp,max(df_tp[,2])/max(df_t2m[,2]),title = "DJF mean - France",
         xlegend = "Time",ylegend1="2m temperature (°C)",ylegend2="Total precipiation (mm)")

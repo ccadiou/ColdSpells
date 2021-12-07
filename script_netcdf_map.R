@@ -34,9 +34,13 @@ par(mfcol=c(3,3))
 lapply(c(21:29),function(i) plot_z500(ncs[[i]],ncs_anomalie[[i]]))
 
 dev.off()
+min <- min(unlist(ncs[31:39]))
+max <- max(unlist(ncs[31:39]))
 par(mfcol=c(3,3))
-lapply(c(31:39),function(i) plot_z500(ncs[[i]],ncs_anomalie[[i]]))
+lapply(c(31:39),function(i) plot_z500(ncs[[i]],ncs_anomalie[[i]],min,max,title=substring(ncnames[[i]],14,34)))
 
+
+plot_z500(ncs[[33]],ncs_anomalie[[33]],min,max,title=substring(ncnames[[33]],14,34))
 
 
 nc_to_array <- function(path,fname,var){
@@ -51,9 +55,10 @@ nc_to_array <- function(path,fname,var){
   return(nc_array)
 }
 
-plot_z500 <- function(array,array_anomalie){
-  image.cont.ano(lon,lat,array_anomalie,mar=c(1,1,1,1),legend=FALSE,transpose = FALSE)
-  image.cont.c(lon,lat,array,mar=c(1,1,1,1),transpose = FALSE,add=TRUE) 
+
+plot_z500 <- function(array,array_anomalie,min,max,title){
+  image.cont.ano(lon,lat,array_anomalie,mar=c(1,1,1,1),titre=title,legend=FALSE,transpose = FALSE,zlev=seq(min,max,length=11))
+  image.cont.c(lon,lat,array,mar=c(1,1,1,1),transpose = FALSE,add=TRUE,titre=title) 
 }
 
 

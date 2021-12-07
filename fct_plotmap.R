@@ -52,6 +52,7 @@
   latF.sort = sort(latF, index.return = TRUE)
   lonF.sort = sort(lonF, index.return = TRUE)
   plot(lonrange, latrange, type = "n", xlab = xlab, ylab = ylab, xlim = lonrange, ylim = latrange)
+  legend("bottomleft",legend=titre)
   image(sort(lonF), sort(latF), dum[lonF.sort$ix, latF.sort$ix], col = col11[length(col11):1], xlab = xlab, ylab = ylab,
         main = titre, breaks = zlev, add = TRUE)
   if (paquet == "fields") {
