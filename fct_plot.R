@@ -1,3 +1,7 @@
+####################
+# Plots of time series ___________________________________________________________________________________________________________________________
+####################
+
 plot_serie_temp <- function(df,title="",xlegend="",ylegend="",line=TRUE,date_low="1944-02-14",date_high="2023-02-14",trend=FALSE,n.breaks=10){
   p <- ggplot(df,aes(x=df[,1],y=df[,2]))
   if (line) {p <- p+geom_line()}
@@ -15,7 +19,7 @@ plot_serie_temp <- function(df,title="",xlegend="",ylegend="",line=TRUE,date_low
   )
 }
 
-
+# plot simultaneously of two time series from two dataframes
 plot_2y <- function(df1,df2,factor,title="",xlegend="",ylegend1="",ylegend2=""){
   p <- ggplot()
   return(
@@ -36,6 +40,32 @@ plot_2y <- function(df1,df2,factor,title="",xlegend="",ylegend1="",ylegend2=""){
   )
 }
 
+####################
+# Plot SWG
+####################
+plot_SWG <- function(path,fname,yymin,yymax,mo.start,day.start){
+  load(paste(path,fname,sep=""))
+  rangeplot=round(range(c(unlist(simu.sta$l.T.mean),
+                          unlist(simu.dyn$l.X.mean)),na.rm=TRUE))
+  ylab=expression(paste("t2m (",degree,"C)"))
+  plot(c(yymin,yymax),rangeplot,type="n",xlab="Years",
+       ylab=ylab)
+  boxplot(simu.sta$l.X.mean,at=c(yymin:yymax)-0.2,
+          add=TRUE,axes=FALSE,col="blue")
+  boxplot(simu.dyn$l.X.mean,at=c(yymin:yymax)+0.2,
+          add=TRUE,axes=FALSE,col="red")
+  lines(c(yymin:yymax),unlist(simu.sta$l.T.mean))
+  legend("topleft",lwd=c(1,5,5),col=c("black","blue","red"),
+         legend=c("Obs.","Static","Dynamic"),bty="n")
+  legend("bottomleft",
+         legend=paste("France","t start = ",mo.start,"/",day.start),
+         bty="n")
+}
+####################
+# Stats plots __________________________________________________________________________________________________________________________________
+####################
+
+# Histogramme of df[,2]
 plot_histo <- function(df,title="",xlegend="",ylegend="",y.n.breaks=NULL,y.expand=c(0.05,0),y.limits=NULL){
   p <- ggplot(df,aes(x=df[,2]))
   return(
@@ -48,7 +78,7 @@ plot_histo <- function(df,title="",xlegend="",ylegend="",y.n.breaks=NULL,y.expan
   )
 }
 
-#Box plot obs et ana
+#Box plot of df with a red point for dfval value
 plot_box <- function(df,dfval,title="",xlabel="",ylabel=""){
   p <- ggplot(df, aes(x=factor(0),y)) + 
     geom_boxplot()+
@@ -71,7 +101,9 @@ plot_box <- function(df,dfval,title="",xlabel="",ylabel=""){
 #   return(p)
 # }
 
-
+####################
+# List plots ? ____________________________________________________________________________________________________________________________________
+####################
 plot_list <- function(dfList,title="",xlabel="",ylabel=""){
   require("dplyr")
   p <- ggplot(bind_rows(dfList,.id="sim"),aes(x=date,y=temp,group=sim))+
@@ -89,6 +121,11 @@ plot_list_obs <- function(df,title="",xlabel="",ylabel=""){
   return(p)
 }
 
+
+####################
+# Plots of severall submeans with same time scale _________________________________________________________________________________________________
+####################
+# with bar plot
 plot_submean <- function(df,title="",xlabel="",ylabel="",legend_title=""){
   p <- ggplot(df,aes(x=date,y=var,color=n_days,fill=n_days))+
     # geom_bar(stat="identity",width=1,alpha=period)+
@@ -102,6 +139,7 @@ plot_submean <- function(df,title="",xlabel="",ylabel="",legend_title=""){
   return(p)
 }
 
+# with bubble plot
 plot_submean_bubble <- function(df,title="",xlabel="",ylabel="",legend_title=""){
   df$n_days <- factor(df$n_days, levels=c(3,10,30,90))
   cc <- scales::seq_gradient_pal("steelblue1","darkblue","Lab")(seq(0,1,length.out=4))
@@ -117,7 +155,32 @@ plot_submean_bubble <- function(df,title="",xlabel="",ylabel="",legend_title="")
 }
 
 
-# Multiple plot function
+#######################
+# plot maps of nc file ___________________________________________________________________________________________________________________________
+#######################
+
+nc_to_array <- function(path,fname,var){
+  require(ncdf4)
+  ncname <- paste(path,fname,sep="")
+  # open a netCDF file
+  ncin <- nc_open(ncname)
+  lon <- ncvar_get(ncin, "lon")
+  lat <- ncvar_get(ncin, "lat", verbose = F)
+  nc_array <- ncvar_get(ncin, var)
+  nc_close(ncin)
+  return(nc_array)
+}
+
+# plots the anomalies and the gopt lines on the same graph
+plot_ano.c <- function(array,array_anomalie,min,max,title=""){
+  image.cont.ano(lon,lat,array_anomalie,mar=c(1,1,1,1),titre=title,legend=FALSE,transpose = FALSE,zlev=seq(min,max,length=11))
+  image.cont.c(lon,lat,array,mar=c(1,1,1,1),transpose = FALSE,add=TRUE,titre=title) 
+}
+
+
+#############
+# Multiple plot function _________________________________________________________________________________________________________________________
+#############
 #
 # ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
 # - cols:   Number of columns in layout

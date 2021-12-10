@@ -1,9 +1,37 @@
+#######################
+# plot maps of nc file ___________________________________________________________________________________________________________________________
+#######################
+
+nc_to_array <- function(path,fname,var){
+  require(ncdf4)
+  ncname <- paste(path,fname,sep="")
+  # open a netCDF file
+  ncin <- nc_open(ncname)
+  lon <- ncvar_get(ncin, "lon")
+  lat <- ncvar_get(ncin, "lat", verbose = F)
+  nc_array <- ncvar_get(ncin, var)
+  nc_close(ncin)
+  return(nc_array)
+}
+
+# plots the anomalies and the gopt lines on the same graph
+plot_ano.c <- function(array,array_anomalie,min,max,title="")
+  image.cont.ano(lon,lat,array_anomalie,mar=c(1,1,1,1),titre=title,legend=FALSE,transpose = FALSE,zlev=seq(min,max,length=11))
+image.cont.c(lon,lat,array,mar=c(1,1,1,1),transpose = FALSE,add=TRUE,titre=title) 
+}
+
+####################
+# Fonctions de plot détaillées
+####################
 # Trace une carte 'longitude-latitude' d'un champ, avec la ligne de continents qui correspond
 "image.cont" <- function(lonF, latF, champ, titre = "", Ichange = numeric(0), zlev = seq(min(champ, na.rm = TRUE), max(champ,na.rm = TRUE), length = 11),
                          transpose = TRUE, mar = c(5, 5, 5, 6), legend = TRUE, xlab = "Longitude", ylab = "Latitude",
                          satur = FALSE, paquet = "fields", add = FALSE, lonrange = range(lonF), latrange = range(latF)) {
   # library(paquet)
-  col10 = rainbow(length(zlev) - 1, start = 0, end = 2/6)
+  # col10 = hcl.colors(length(zlev)-1,palette='Blue-Red 2',rev=TRUE)
+  # col10 = rainbow(length(zlev)-1)#,rev=TRUE)
+  col10 = viridis(length(zlev)-1,direction=-1)
+  #rainbow(length(zlev) - 1, start = 0, end = 2/6)
   # par( mar=c(10,5,5,5))
   par(mar = mar)
   if (satur) {
@@ -16,9 +44,9 @@
     dum = t(matrix(champ, length(latF), length(lonF))) else dum = matrix(champ, length(lonF), length(latF))
   latF.sort = sort(latF, index.return = TRUE)
   lonF.sort = sort(lonF, index.return = TRUE)
-  plot(lonrange, latrange, type = "n", xlab = xlab, ylab = ylab, xlim = lonrange, ylim = latrange)
+  plot(lonrange, latrange, type = "n", xlab = xlab, ylab = ylab, xlim = lonrange, ylim = latrange,main=titre)
   image(sort(lonF), sort(latF), dum[lonF.sort$ix, latF.sort$ix], col = col10[length(col10):1], xlab = xlab, ylab = ylab,
-        main = titre, breaks = zlev, add = TRUE)
+        breaks = zlev, add = TRUE)
   if (paquet == "fields") {
     library(fields)
     world(add = TRUE)
@@ -29,7 +57,7 @@
     map(add = TRUE)
   }
   if (legend)
-    image.plot(dum[, length(latF):1], col = col10[length(col10):1], legend.only = TRUE, zlim = range(zlev))
+    image.plot(dum[, length(latF):1], col = col10[length(col10):1], legend.only = TRUE, zlim = range(zlev),horizontal=TRUE,legend.width=0.5)
 }
 
 

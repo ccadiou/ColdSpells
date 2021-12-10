@@ -1,20 +1,21 @@
 
 source("~/Documents/These/Code/Winter/fct_ncmap.R")
+source("fct_plotmap.R")
+source("fct_plot.R")
+library(ncdf4)
 
 ##### Plot anomalie + courbes de geopt _____________________________________________________________________________________________________________________________#####
-library(ncdf4)
-source("fct_plotmap.R")
 # set path and filename
 ncpath <- "~/Documents/These/Data/Winter/submeans_z500_largefield/"
-test <- nc_to_array(ncpath,"era5_z500_90_1953-01-01_1953-03-31.nc","z500")
-ncname <- paste(ncpath,"era5_z500_90_1953-01-01_1953-03-31.nc",sep="")
+
+ncnames <- list.files(ncpath)
+ncname <- paste(ncpath,ncnames[[1]],sep="")
 # open a netCDF file
 ncin <- nc_open(ncname)
 lon <- ncvar_get(ncin, "lon")
 lat <- ncvar_get(ncin, "lat", verbose = F)
 nc_close(ncin)
 
-ncnames <- list.files(ncpath)
 ncs <- lapply(ncnames,function(f) nc_to_array(ncpath,f,"z500"))
 
 ncpath_anomalie <- "~/Documents/These/Data/Winter/submeans_z500_anomalie_largefield/"
@@ -23,44 +24,46 @@ ncs_anomalie <- lapply(ncnames_anomalie,function(f) nc_to_array(ncpath_anomalie,
 
 dev.off()
 par(mfcol=c(3,3))#,mar=c(-1,0,0,0))
-lapply(c(1:9),function(i) plot_z500(ncs[[i]],ncs_anomalie[[i]]))
+lapply(c(1:9),function(i) plot_ano.c(ncs[[i]],ncs_anomalie[[i]]))
 
 dev.off()
 par(mfcol=c(3,3))
-lapply(c(11:19),function(i) plot_z500(ncs[[i]],ncs_anomalie[[i]]))
+lapply(c(11:19),function(i) plot_ano.c(ncs[[i]],ncs_anomalie[[i]]))
 
 dev.off()
 par(mfcol=c(3,3))
-lapply(c(21:29),function(i) plot_z500(ncs[[i]],ncs_anomalie[[i]]))
+lapply(c(21:29),function(i) plot_ano.c(ncs[[i]],ncs_anomalie[[i]]))
 
 dev.off()
 min <- min(unlist(ncs[31:39]))
 max <- max(unlist(ncs[31:39]))
 par(mfcol=c(3,3))
-lapply(c(31:39),function(i) plot_z500(ncs[[i]],ncs_anomalie[[i]],min,max,title=substring(ncnames[[i]],14,34)))
+lapply(c(31:39),function(i) plot_ano.c(ncs[[i]],ncs_anomalie[[i]],min,max,title=substring(ncnames[[i]],14,34)))
 
 
-plot_z500(ncs[[33]],ncs_anomalie[[33]],min,max,title=substring(ncnames[[33]],14,34))
+plot_ano.c(ncs[[33]],ncs_anomalie[[33]],min,max,title=substring(ncnames[[33]],14,34))
 
 
-nc_to_array <- function(path,fname,var){
-  require(ncdf4)
-  ncname <- paste(path,fname,sep="")
-  # open a netCDF file
-  ncin <- nc_open(ncname)
-  lon <- ncvar_get(ncin, "lon")
-  lat <- ncvar_get(ncin, "lat", verbose = F)
-  nc_array <- ncvar_get(ncin, var)
-  nc_close(ncin)
-  return(nc_array)
-}
+###########
+#Ncdf maps of few files withour anomalie
+ncpath <- "~/Documents/These/Data/Winter/z500_specific_dates/"
 
+ncnames <- list.files(ncpath)
+nctitles <- paste(substr(ncnames,13,16),"-",substr(ncnames,17,18),"-",substr(ncnames,19,20),sep="")
+nctitles[[1]] <- paste(nctitles[[1]],"(ref)")
+ncname <- paste(ncpath,ncnames[[1]],sep="")
+# open a netCDF file
+ncin <- nc_open(ncname)
+lon <- ncvar_get(ncin, "lon")
+lat <- ncvar_get(ncin, "lat", verbose = F)
+nc_close(ncin)
 
-plot_z500 <- function(array,array_anomalie,min,max,title){
-  image.cont.ano(lon,lat,array_anomalie,mar=c(1,1,1,1),titre=title,legend=FALSE,transpose = FALSE,zlev=seq(min,max,length=11))
-  image.cont.c(lon,lat,array,mar=c(1,1,1,1),transpose = FALSE,add=TRUE,titre=title) 
-}
+ncs <- lapply(ncnames,function(f) nc_to_array(ncpath,f,"z500"))
+min <- min(unlist(ncs))
+max <- max(unlist(ncs))
 
+image.cont(lon,lat,ncs[[1]],titre=ncnames[[1]],transpose=FALSE,zlev=seq(min,max,length=11))
 
-
-
+dev.off()
+par(mfcol=c(1,4))#,mar=c(-1,0,0,0))
+lapply(c(1:4),function(i) image.cont(lon,lat,ncs[[i]],transpose=FALSE,zlev=seq(min,max,length=100),mar=c(8,3,3,1),titre=nctitles[[i]],legend=TRUE,ylab="",xlab=""))
