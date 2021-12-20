@@ -8,16 +8,21 @@ source("fct_plot.R")
 ########## CHARGEMENT DES DONNÉES ##########
 #importance sampling
 path <- "~/Documents/These/Data/Winter/WEGE/"
-fnames <- list.files(path)
+fnames <- list.files(path,pattern="*906439*")
 
-name <- "TX-m12d1_UNCLE-min-animsa_cal3_TX0.5meth1-897290-1951-2021.Rdat"
+# name <- "TX-m12d1_UNCLE-min-animsa_cal3_TX0.5meth1-897290-1951-2021.Rdat"
 ymin <- 1951
 ymax <- 2020
 mstart <- 12
 dstart <- 01
 
-plot_SWG(path,fnames[[1]],ymin,ymax,mstart,dstart)
-plot_SWG(path,fnames[[5]],ymin,ymax,mstart,dstart)
+#load(paste(path,fnames[[5]],sep=""))
+par(mfcol=c(2,2),mar=c(3,3,2,2))
+plot_SWG(path,fnames[[1]],ymin,ymax,mstart,dstart,substring(fnames[[1]],50,64))
+plot_SWG(path,fnames[[3]],ymin,ymax,mstart,dstart,substring(fnames[[3]],50,64))
+plot_SWG(path,fnames[[2]],ymin,ymax,mstart,dstart,substring(fnames[[2]],50,64))
+plot_SWG(path,fnames[[4]],ymin,ymax,mstart,dstart,substring(fnames[[4]],50,64))
+
 
 
 load(paste(path,fnames[[5]],sep=""))
