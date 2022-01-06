@@ -1,6 +1,6 @@
 
-source("~/Documents/These/Code/Winter/fct_ncmap.R")
-source("fct_plotmap.R")
+# source("~/Documents/These/Code/Winter/fct_ncmap.R")
+source("~/Documents/These/Code/Winter/fct_plotmap.R")
 source("fct_plot.R")
 library(ncdf4)
 
@@ -22,30 +22,38 @@ ncpath_anomalie <- "~/Documents/These/Data/Winter/submeans_z500_anomalie_largefi
 ncnames_anomalie <- list.files(ncpath_anomalie) 
 ncs_anomalie <- lapply(ncnames_anomalie,function(f) nc_to_array(ncpath_anomalie,f,"z500"))
 
-dev.off()
+dev.off() #Minimum sur 3 jours
+min <- min(unlist(ncs[é1:29]))
+max <- max(unlist(ncs[21:29]))
+par(mfcol=c(3,3))
+lapply(c(21:29),function(i) plot_ano.c(lon,lat,ncs[[i]]/100,ncs_anomalie[[i]],
+                                       min,max,
+                                       title=toString(as.numeric(substring(ncnames[[i]],14,17))-1)))
+dev.off() #Minimum sur 10 jours
+min <- min(unlist(ncs[1:9]))
+max <- max(unlist(ncs[1:9]))
 par(mfcol=c(3,3))#,mar=c(-1,0,0,0))
-lapply(c(1:9),function(i) plot_ano.c(ncs[[i]],ncs_anomalie[[i]]))
-
-dev.off()
+lapply(c(1:9),function(i) plot_ano.c(lon,lat,ncs[[i]]/100,ncs_anomalie[[i]],
+                                       min,max,
+                                       title=toString(as.numeric(substring(ncnames[[i]],14,17))-1)))
+dev.off() #Minimum sur 30 jours
+min <- min(unlist(ncs[11:19]))
+max <- max(unlist(ncs[11:19]))
 par(mfcol=c(3,3))
-lapply(c(11:19),function(i) plot_ano.c(ncs[[i]],ncs_anomalie[[i]]))
-
-dev.off()
-par(mfcol=c(3,3))
-lapply(c(21:29),function(i) plot_ano.c(ncs[[i]],ncs_anomalie[[i]]))
-
-dev.off()
+lapply(c(11:19),function(i) plot_ano.c(lon,lat,ncs[[i]]/100,ncs_anomalie[[i]],
+                                       min,max,
+                                       title=toString(as.numeric(substring(ncnames[[i]],14,17))-1)))
+dev.off() #Minimum sur 90 jours
 min <- min(unlist(ncs[31:39]))
 max <- max(unlist(ncs[31:39]))
 par(mfcol=c(3,3))
-lapply(c(31:39),function(i) plot_ano.c(ncs[[i]],ncs_anomalie[[i]],min,max,title=substring(ncnames[[i]],14,34)))
-
-
-plot_ano.c(ncs[[33]],ncs_anomalie[[33]],min,max,title=substring(ncnames[[33]],14,34))
-
+lapply(c(31:39),function(i) plot_ano.c(lon,lat,ncs[[i]]/100,ncs_anomalie[[i]],
+                                       min,max,
+                                       title=toString(as.numeric(substring(ncnames[[i]],14,17))-1)))
 
 ###########
-#Ncdf maps of few files withour anomalie
+#Ncdf maps of few files without anomalie
+###########
 ncpath <- "~/Documents/These/Data/Winter/z500_specific_dates/"
 
 ncnames <- list.files(ncpath)

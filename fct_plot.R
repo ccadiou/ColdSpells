@@ -173,8 +173,8 @@ nc_to_array <- function(path,fname,var){
 }
 
 # plots the anomalies and the gopt lines on the same graph
-plot_ano.c <- function(array,array_anomalie,min,max,title=""){
-  image.cont.ano(lon,lat,array_anomalie,mar=c(1,1,1,1),titre=title,legend=FALSE,transpose = FALSE,zlev=seq(min,max,length=11))
+plot_ano.c <- function(lon,lat,array,array_anomalie,min,max,title=""){
+  image.cont.ano(lon,lat,array_anomalie,mar=c(1,1,1,1),titre=title,legend=FALSE,transpose = FALSE,zlev=seq(min,max,length=11))#+legend("bottomright",legend=title)
   image.cont.c(lon,lat,array,mar=c(1,1,1,1),transpose = FALSE,add=TRUE,titre=title) 
 }
 

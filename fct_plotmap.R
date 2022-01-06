@@ -15,7 +15,7 @@ nc_to_array <- function(path,fname,var){
 }
 
 # plots the anomalies and the gopt lines on the same graph
-plot_ano.c <- function(array,array_anomalie,min,max,title="")
+plot_ano.c <- function(array,array_anomalie,min,max,title=""){
   image.cont.ano(lon,lat,array_anomalie,mar=c(1,1,1,1),titre=title,legend=FALSE,transpose = FALSE,zlev=seq(min,max,length=11))
 image.cont.c(lon,lat,array,mar=c(1,1,1,1),transpose = FALSE,add=TRUE,titre=title) 
 }
@@ -80,9 +80,9 @@ image.cont.c(lon,lat,array,mar=c(1,1,1,1),transpose = FALSE,add=TRUE,titre=title
   latF.sort = sort(latF, index.return = TRUE)
   lonF.sort = sort(lonF, index.return = TRUE)
   plot(lonrange, latrange, type = "n", xlab = xlab, ylab = ylab, xlim = lonrange, ylim = latrange)
-  legend("bottomleft",legend=titre)
   image(sort(lonF), sort(latF), dum[lonF.sort$ix, latF.sort$ix], col = col11[length(col11):1], xlab = xlab, ylab = ylab,
         main = titre, breaks = zlev, add = TRUE)
+  legend("bottomleft",legend=titre)
   if (paquet == "fields") {
     library(fields)
     world(add = TRUE)
@@ -111,6 +111,7 @@ image.cont.c(lon,lat,array,mar=c(1,1,1,1),transpose = FALSE,add=TRUE,titre=title
   nlev = length(zlev)
   contour(lonF, sort(latF), dum[, latF.sort$ix], xlab = xlab, ylab = ylab, main = titre, col = col, add = add, nlevels = nlev,
           levels = zlev, lty = lty)
+  legend("bottomleft",legend=titre)
   if (paquet == "fields") {
     library(fields)
     world(xlim = range(lonF), ylim = range(latF), add = TRUE)
