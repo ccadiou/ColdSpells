@@ -38,7 +38,22 @@ colnames(df_tp_anomalie) <- c("date","tp")
 df_tp_anomalie$date <- as.Date(df_tp_anomalie$date,format="%Y-%m-%d")
 save(df_tp_anomalie,file="./data/era5_tp_DJFmean_fr_anomaliepdg.RData")
 
-#### Temperature ####
+#### Temperature EOBS ####
+# yearmean of DJF
+df_tg <- read.table("../../Data/Winter/submeans_eobs/eobs_tg_DJFmean_fr.txt",header=FALSE)
+colnames(df_tg) <- c("date","tg")
+#df_tg$date <- format(as.Date(df_tg$date,format="%Y-%m-%d"),"%Y")
+df_tg$date <- as.Date(df_tg$date,format="%Y-%m-%d")
+df_tg <- df_tg[df_tg$date>"1950-11-01",]
+save(df_tg,file="./data/eobs_tg_DJFmean_fr.RData")
+#daily values
+df_tg_daily <- read.table("../../Data/Winter/eobs_tg_daily_fr.txt",header=FALSE)
+colnames(df_tg_daily) <- c("date","tg")
+df_tg_daily$date <- as.Date(df_tg_daily$date,format="%Y-%m-%d")
+save(df_tg_daily,file="./data/eobs_tg_daily_fr.RData")
+
+
+#### Temperature ERA5 ####
 # yearmean of DJF
 df_t2m <- read.table("../../Data/Winter/era5_t2m_DJFmean_fr.txt",header=FALSE)
 colnames(df_t2m) <- c("date","t2m")

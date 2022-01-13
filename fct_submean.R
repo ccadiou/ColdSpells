@@ -1,7 +1,7 @@
 ##### Sous-moyenne (max sur 30 jours, 10 jours, 3 jours) #####
-ndays_min <- function(nDays,path,var_name,func,anomalie=FALSE){
+ndays_min <- function(nDays,path,source,var_name,func,anomalie=FALSE){
   if (anomalie) {anomalie_txt <- "_anomaliepdg"} else {anomalie_txt <- ""}
-  nameNDays <- paste("era5_",var_name,"_DJF_",nDays,func,anomalie_txt,".txt",sep="")
+  nameNDays <- paste(source,"_",var_name,"_DJF_",nDays,func,anomalie_txt,".txt",sep="")
   dfNDays <- read.table(file = paste(path,nameNDays,sep=""), header = FALSE)
   dfNDays$V1 <- format(as.Date(dfNDays$V1,format="%Y-%m-%d"),"%Y")
   if (var_name=="t2m" & !anomalie){dfNDays$V2 <- dfNDays$V2-273.15}
@@ -10,9 +10,9 @@ ndays_min <- function(nDays,path,var_name,func,anomalie=FALSE){
   return(dfNDays)
 }
 
-ndays_minidx <- function(nDays,path,var_name,func,anomalie=FALSE){
+ndays_minidx <- function(nDays,path,source,var_name,func,anomalie=FALSE){
   if (anomalie) {anomalie_txt <- "_anomaliepdg"} else {anomalie_txt <- ""}
-  nameIndex <- paste("era5_",var_name,"_DJF_",nDays,func,"idx",anomalie_txt,".txt",sep="")
+  nameIndex <- paste(source,"_",var_name,"_DJF_",nDays,func,"idx",anomalie_txt,".txt",sep="")
   dfIndex <- read.table(file = paste(path,nameIndex,sep=""), header = FALSE)
   dfIndex$V1 <- as.Date(dfIndex$V1,format="%Y-%m-%d")
   dfIndex$V2 <- dfIndex$V1-75+dfIndex$V2*nDays
