@@ -11,6 +11,11 @@ path <- "~/Documents/These/Data/Winter/WEGE/"
 fnames <- list.files(path,pattern="*906439*")
 fnames[[5]] <- "TX-m12d1_UNCLE-min-animsa_cal3_TX0.5meth1-897290-1951-2021.Rdat"
 fnames[[6]] <- "TX-m12d1_UNCLE-min-animsa_cal3_TX0meth1-940039-1951-2021.Rdat"
+fnames[[7]] <- "TX-m12d1_UNCLE-min-animsa_cal3_TX0.5meth1-947773-1972-2021.Rdat"
+
+############
+# Plot des série temporelles obs - sta - dyn de 1951 à 2020
+############
 
 # name <- "TX-m12d1_UNCLE-min-animsa_cal3_TX0.5meth1-897290-1951-2021.Rdat"
 ymin <- 1951
@@ -18,44 +23,133 @@ ymax <- 2020
 mstart <- 12
 dstart <- 01
 
+dev.off()
 #load(paste(path,fnames[[5]],sep=""))
 par(mfcol=c(2,3),mar=c(3,3,2,2))
 plot_SWG(path,fnames[[1]],ymin,ymax,mstart,dstart,substring(fnames[[1]],50,64))     #1851-1999 without 1963
 plot_SWG(path,fnames[[3]],ymin,ymax,mstart,dstart,substring(fnames[[3]],50,64))     #1951-2021 without 1963
 plot_SWG(path,fnames[[2]],ymin,ymax,mstart,dstart,substring(fnames[[2]],50,58))     #1951-1999
 plot_SWG(path,fnames[[4]],ymin,ymax,mstart,dstart,substring(fnames[[4]],50,58))     #1951-2021
-plot_SWG(path,fnames[[5]],ymin,ymax,mstart,dstart,substring(fnames[[5]],50,58))
+plot_SWG(path,fnames[[5]],ymin,ymax,mstart,dstart,substring(fnames[[5]],50,58))     #1951-2021 autre simulation
+plot_SWG(path,fnames[[6]],ymin,ymax,mstart,dstart,substring(fnames[[6]],48,56))     #1951-2021 sans importance sampling
+plot_SWG(path,fnames[[7]],ymin,ymax,mstart,dstart,substring(fnames[[7]],48,56))     #1972-2021
 # plot_SWG(path,fnames[[5]],ymin,ymax,mstart,dstart,substring(fnames[[5]],50,58))
 
-
+#COmparaison avec et sans 1963
 par(mfcol=c(1,2),mar=c(3,3,2,2))
-plot_SWG(path,fnames[[3]],ymin,ymax,mstart,dstart,substring(fnames[[3]],50,64))
-plot_SWG(path,fnames[[4]],ymin,ymax,mstart,dstart,substring(fnames[[4]],50,58))
+plot_SWG(path,fnames[[3]],ymin,ymax,mstart,dstart,substring(fnames[[3]],50,64))     # Sans 1963
+plot_SWG(path,fnames[[4]],ymin,ymax,mstart,dstart,substring(fnames[[4]],50,58))     # Avec 1963
 
+#Comparaison avec et sans importance sampling
 par(mfcol=c(1,2),mar=c(3,3,2,2))
-plot_SWG(path,fnames[[6]],ymin,ymax,mstart,dstart,substring(fnames[[6]],48,56))
-plot_SWG(path,fnames[[4]],ymin,ymax,mstart,dstart,substring(fnames[[4]],50,58))
+plot_SWG(path,fnames[[6]],ymin,ymax,mstart,dstart,substring(fnames[[6]],48,56))     #1951-2021 sans importance sampling
+plot_SWG(path,fnames[[4]],ymin,ymax,mstart,dstart,substring(fnames[[4]],50,58))     #1951-2021 avec Importance sampling
 
-### Comparaison des distributions
+#Comparaison 1950-1999 et 1972-2021
+par(mfcol=c(1,2),mar=c(3,3,2,2))
+plot_SWG(path,fnames[[2]],ymin,ymax,mstart,dstart,substring(fnames[[2]],50,58))     #1950-1999
+plot_SWG(path,fnames[[7]],ymin,ymax,mstart,dstart,substring(fnames[[7]],50,58))     #1972-2021
+
+########
+### Comparaison des distributions avec et sans 1963
+########
+#### Avec et sans 1963 ####
 load(paste(path,fnames[[4]],sep=""))
 means_1951_2021 <- as.data.frame(cbind(unlist(simu.dyn$l.T.mean),unlist(lapply(simu.dyn$l.X.mean,mean))))
-
 load(paste(path,fnames[[3]],sep=""))
 means_1951_2021_w1963 <- as.data.frame(cbind(unlist(simu.dyn$l.T.mean),unlist(lapply(simu.dyn$l.X.mean,mean))))
+#test de Kolmogorov-Sirnov
+ks.test(means_1951_2021[,2],means_1951_2021_w1963[,2])  # Test de Kolmogorov-Smirnov
 
-plot_histo(means_1951_2021)
-plot_histo(means_1951_2021_w1963)
-
-#same histo
+#plot_histo(means_1951_2021)
+#plot_histo(means_1951_2021_w1963)
 means <- as.data.frame(rbind(cbind(vals=means_1951_2021[,2],group="1951-2021"),cbind(vals=means_1951_2021_w1963[,2],group="without 1963")))
 means$vals <- as.numeric(means$vals)
 means$grp.mean<- ave(means$vals, means$group)
+
+#### Avec analogues de 1950-1999 et 1972-2021 ####
+load(paste(path,fnames[[2]],sep=""))
+means_1951_1999 <- as.data.frame(cbind(unlist(simu.dyn$l.T.mean),unlist(lapply(simu.dyn$l.X.mean,mean))))
+load(paste(path,fnames[[7]],sep=""))
+means_1972_2021 <- as.data.frame(cbind(unlist(simu.dyn$l.T.mean),unlist(lapply(simu.dyn$l.X.mean,mean))))
+#test de Kolmogorov-Sirnov
+ks.test(means_1951_1999[,2],means_1972_2021[,2])  # Test de Kolmogorov-Smirnov
+
+means_1972_2021 <- as.data.frame(cbind(unlist(simu.dyn$l.T.mean),unlist(lapply(simu.dyn$l.X.mean,mean))))
+means <- as.data.frame(rbind(cbind(vals=means_1951_1999[,2],group="1951-1999"),cbind(vals=means_1972_2021[,2],group="1972-2021")))
+means$vals <- as.numeric(means$vals)
+means$grp.mean<- ave(means$vals, means$group)
+
+#### Histogrammes ####
 p <- ggplot(means, aes(x=vals, color=group)) + geom_histogram(position="dodge",alpha=0.5,fill='white')+
   theme_linedraw()+geom_vline(data=means, aes(xintercept=grp.mean, color=group),linetype="dashed")+
   theme(legend.position="top",legend.title=element_blank())+labs(x="Temperature (°C)",y="Count")
 p
 #test de Kolmogorov-Sirnov
-ks.test(means_1951_2021[,2],means_1951_2021_w1963[,2])  # Test de Kolmogorov-Smirnov
+
+
+##########
+# Calcul de la carte moyenne des simulations
+##########
+load(paste(path,fnames[[4]],sep="")) # 1951-2021
+# load(paste(path,fnames[[3]],sep="")) # 1951-2021 sans 1963
+
+days_sim <- as.data.frame(do.call(rbind,simu.dyn$l.X$`1963`))
+days_sim[,1] <- as.Date(as.character(days_sim[,1]),format="%Y%m%d")
+# days_sim <- days_sim[,c(2,1)]
+
+p <- ggplot(days_sim,aes(x=days_sim[,1]))
+p + geom_histogram(color="black", fill="snow3",bins=2555) +
+      theme_linedraw()+
+      theme(legend.position = "None",legend.title = element_blank())
+
+x <- as.Date(1:26176, origin = "1950-01-01")
+x <- cut(x, breaks = "day")
+dates_frq <- cbind(as.data.frame(x),0)
+
+## Tabulate
+tab <- table(cut(days_sim[,1], 'day'))
+## Format
+dates_frq_part <- data.frame(Date=format(as.Date(names(tab)),"%Y-%m-%d"),
+           Frequency=as.vector(tab))
+dates_frq[dates_frq$x %in% dates_frq_part$Date,2] <- dates_frq_part[,2]
+
+#write netcdf file
+library(ncdf4)
+ncname <- "~/Documents/These/Data/Winter/era5_t2m_daily_fr.nc"
+
+# open a netCDF file
+ncin <- nc_open(ncname)
+time <- ncvar_get(ncin, "time")
+tunits <-  ncatt_get(ncin, "time","units")
+lon <- ncvar_get(ncin, "lon")
+lat <- ncvar_get(ncin, "lat", verbose = F)
+nc_close(ncin)
+
+filename="nb_ana_1963.nc"
+xvals <- seq(-20, 30, 1)
+yvals <- seq(30.5, 70, 1) 
+nx <- length(xvals)
+ny <- length(yvals)
+lon2 <- ncdim_def("longitude", "degrees_east", xvals)
+lat2 <- ncdim_def("latitude", "degrees_north", yvals)
+
+time2 <- ncdim_def("Time",tunits$value, time)
+var_temp <- ncvar_def("count", "",list(lon2,lat2,time2), NA) 
+
+data <- rep(dates_frq[,2],each=nx*ny)
+
+ncnew <- nc_create(filename, list(var_temp))
+ncvar_put(ncnew, var_temp, data, start=c(1,1,1), count=c(nx,ny,time2$len))
+
+nc_close(ncnew)
+
+# Verification
+library(rasterVis)
+out <- raster("time.nc")
+levelplot(out, margin=FALSE)
+
+
 ##########
 # Boxplots pour les simulations d'un événement _______________________________________________________________________________________________________
 ##########

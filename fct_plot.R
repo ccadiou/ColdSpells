@@ -47,7 +47,7 @@ plot_SWG <- function(path,fname,yymin,yymax,mo.start,day.start,title="",ymin,yma
   load(paste(path,fname,sep=""))
   rangeplot=round(range(c(unlist(simu.sta$l.T.mean),
                           unlist(simu.dyn$l.X.mean)),na.rm=TRUE))
-  # rangeplot=c(-2,7)
+  rangeplot=c(-2,7)
   ylab=expression(paste("t2m (",degree,"C)"))
   plot(c(yymin,yymax),rangeplot,type="n",xlab="Years",
        ylab=ylab)
