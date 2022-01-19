@@ -43,11 +43,12 @@ plot_2y <- function(df1,df2,factor,title="",xlegend="",ylegend1="",ylegend2=""){
 ####################
 # Plot SWG
 ####################
-plot_SWG <- function(path,fname,yymin,yymax,mo.start,day.start,title="",ymin,ymax){
+plot_SWG <- function(path,fname,yymin,yymax,mo.start,day.start,title="",ymin=NA,ymax=NA){
   load(paste(path,fname,sep=""))
-  rangeplot=round(range(c(unlist(simu.sta$l.T.mean),
-                          unlist(simu.dyn$l.X.mean)),na.rm=TRUE))
-  rangeplot=c(-2,7)
+  if (is.na(ymin) | is.na(ymax)){
+    rangeplot=round(range(c(unlist(simu.sta$l.T.mean),
+                            unlist(simu.dyn$l.X.mean)),na.rm=TRUE))
+  } else {rangeplot=c(ymin,ymax)}
   ylab=expression(paste("t2m (",degree,"C)"))
   plot(c(yymin,yymax),rangeplot,type="n",xlab="Years",
        ylab=ylab)

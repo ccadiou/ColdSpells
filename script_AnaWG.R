@@ -12,6 +12,8 @@ fnames <- list.files(path,pattern="*906439*")
 fnames[[5]] <- "TX-m12d1_UNCLE-min-animsa_cal3_TX0.5meth1-897290-1951-2021.Rdat"
 fnames[[6]] <- "TX-m12d1_UNCLE-min-animsa_cal3_TX0meth1-940039-1951-2021.Rdat"
 fnames[[7]] <- "TX-m12d1_UNCLE-min-animsa_cal3_TX0.5meth1-947773-1972-2021.Rdat"
+fnames[[8]] <- "TX-m1d1_l30_UNCLE-min-animsa_cal3_TX0.5meth1-950187-30d_1951-2021.Rdat"
+fnames[[9]] <- "TX-m1d1_l30_UNCLE-min-animsa_cal3_TX0meth1-952730-30d_1951-2021.Rdat"
 
 ############
 # Plot des série temporelles obs - sta - dyn de 1951 à 2020
@@ -33,6 +35,8 @@ plot_SWG(path,fnames[[4]],ymin,ymax,mstart,dstart,substring(fnames[[4]],50,58)) 
 plot_SWG(path,fnames[[5]],ymin,ymax,mstart,dstart,substring(fnames[[5]],50,58))     #1951-2021 autre simulation
 plot_SWG(path,fnames[[6]],ymin,ymax,mstart,dstart,substring(fnames[[6]],48,56))     #1951-2021 sans importance sampling
 plot_SWG(path,fnames[[7]],ymin,ymax,mstart,dstart,substring(fnames[[7]],48,56))     #1972-2021
+
+
 # plot_SWG(path,fnames[[5]],ymin,ymax,mstart,dstart,substring(fnames[[5]],50,58))
 
 #COmparaison avec et sans 1963
@@ -49,6 +53,21 @@ plot_SWG(path,fnames[[4]],ymin,ymax,mstart,dstart,substring(fnames[[4]],50,58)) 
 par(mfcol=c(1,2),mar=c(3,3,2,2))
 plot_SWG(path,fnames[[2]],ymin,ymax,mstart,dstart,substring(fnames[[2]],50,58))     #1950-1999
 plot_SWG(path,fnames[[7]],ymin,ymax,mstart,dstart,substring(fnames[[7]],50,58))     #1972-2021
+
+
+##### SUR 30 jours (Janvier) ####
+dev.off()
+mstart <- 01
+ymax <- 2021
+yinf <- -4
+ysup <- 8
+plot_SWG(path,fnames[[8]],ymin,ymax,mstart,dstart,substring(fnames[[8]],57,65))     #Simulations des janvier (30 jours)
+plot_SWG(path,fnames[[9]],ymin,ymax,mstart,dstart,substring(fnames[[9]],57,65))     #Simulations des janvier (30 jours)
+
+# Comparaison avec et sans importance sampling pour 30 j
+par(mfcol=c(1,2),mar=c(3,3,2,2))
+plot_SWG(path,fnames[[9]],ymin,ymax,mstart,dstart,substring(fnames[[9]],55,63),yinf,ysup)     #Simulations des janvier (30 jours)
+plot_SWG(path,fnames[[8]],ymin,ymax,mstart,dstart,substring(fnames[[8]],57,65),yinf,ysup)     #Simulations des janvier (30 jours)
 
 ########
 ### Comparaison des distributions avec et sans 1963
