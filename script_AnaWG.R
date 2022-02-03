@@ -54,6 +54,16 @@ par(mfcol=c(1,2),mar=c(3,3,2,2))
 plot_SWG(path,fnames[[2]],ymin,ymax,mstart,dstart,substring(fnames[[2]],50,58))     #1950-1999
 plot_SWG(path,fnames[[7]],ymin,ymax,mstart,dstart,substring(fnames[[7]],50,58))     #1972-2021
 
+## Calcul des 2à meilleures analogues sur la nouvelle période (sans NA)
+path <- "~/Documents/These/Data/Winter/WEGE/"
+fnames <- list.files(path,pattern="*954601")
+yinf <- -4
+ysup <- 8
+par(mfcol=c(2,2),mar=c(3,3,2,2))
+plot_SWG(path,fnames[[1]],ymin,ymax,mstart,dstart,substring(fnames[[1]],54,68),yinf,ysup)     #1851-1999 without 1963
+plot_SWG(path,fnames[[2]],ymin,ymax,mstart,dstart,substring(fnames[[2]],54,62),yinf,ysup)     #1951-1999
+plot_SWG(path,fnames[[3]],ymin,ymax,mstart,dstart,substring(fnames[[3]],54,68),yinf,ysup)     #1951-2021 without 1963
+plot_SWG(path,fnames[[4]],ymin,ymax,mstart,dstart,substring(fnames[[4]],54,62),yinf,ysup)     #1951-2021
 
 ##### SUR 30 jours (Janvier) ####
 dev.off()
