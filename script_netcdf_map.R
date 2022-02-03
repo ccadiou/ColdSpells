@@ -1,6 +1,6 @@
 
-# source("~/Documents/These/Code/Winter/fct_ncmap.R")
-source("~/Documents/These/Code/Winter/fct_plotmap.R")
+# source("~/Documents/Code/Winter/fct_ncmap.R")
+source("~/Documents/Code/Winter/fct_plotmap.R")
 source("fct_plot.R")
 library(ncdf4)
 
@@ -9,7 +9,7 @@ library(ncdf4)
 ##########
 ###### Comparaison obs/simulations #######
 # Simulations 1963
-path_sim <- "~/Documents/These/Data/Winter/"
+path_sim <- "~/Documents/Data/Winter/"
 ncname_sim <- "z500_1963_sim.nc"
 ncin_sim <- nc_open(paste(path_sim,ncname_sim,sep=""))
 lon_sim <- ncvar_get(ncin_sim, "lon")
@@ -25,7 +25,7 @@ min <- -max
 plot_ano.c(lon_sim,lat_sim,nc_sim/100,nc_anomalie_sim,min(nc_anomalie_sim),max(nc_anomalie_sim),title="1963_sims")
 
 # Réanalyses 1963
-path <- "~/Documents/These/Data/Winter/submeans_z500_largefield/"
+path <- "~/Documents/Data/Winter/submeans_z500/"
 ncname <- "era5_z500_90_1962-12-01_1963-02-28.nc"
 ncin <- nc_open(paste(path,ncname,sep=""))
 lon <- ncvar_get(ncin, "lon")
@@ -33,7 +33,7 @@ lat <- ncvar_get(ncin, "lat", verbose = F)
 nc_close(ncin)
 nc <- nc_to_array(path,ncname,"z500")
 
-ncpath_anomalie <- "~/Documents/These/Data/Winter/submeans_z500_anomalie_largefield/"
+ncpath_anomalie <- "~/Documents/Data/Winter/submeans_z500_anomalie/"
 ncname_anomalie <- "era5_z500_90_1962-12-01_1963-02-28_anomalie.nc"
 nc_anomalie <- nc_to_array(ncpath_anomalie,ncname_anomalie,"z500")
 
@@ -48,7 +48,7 @@ plot_ano.c(lon,lat,nc/100,nc_anomalie,min,max,title="1963_ERA5")
 
 ### Set of files, 10 records by time range #### 
 # path and filename
-ncpath <- "~/Documents/These/Data/Winter/submeans_z500_largefield/"
+ncpath <- "~/Documents/Data/Winter/submeans_z500_largefield/"
 
 ncnames <- list.files(ncpath)
 ncname <- paste(ncpath,ncnames[[1]],sep="")
@@ -60,7 +60,7 @@ nc_close(ncin)
 
 ncs <- lapply(ncnames,function(f) nc_to_array(ncpath,f,"z500"))
 
-ncpath_anomalie <- "~/Documents/These/Data/Winter/submeans_z500_anomalie_largefield/"
+ncpath_anomalie <- "~/Documents/Data/Winter/submeans_z500_anomalie_largefield/"
 ncnames_anomalie <- list.files(ncpath_anomalie) 
 ncs_anomalie <- lapply(ncnames_anomalie,function(f) nc_to_array(ncpath_anomalie,f,"z500"))
 
@@ -96,7 +96,7 @@ lapply(c(31:39),function(i) plot_ano.c(lon,lat,ncs[[i]]/100,ncs_anomalie[[i]],
 ###########
 #Ncdf maps of few files without anomalie
 ###########
-ncpath <- "~/Documents/These/Data/Winter/z500_specific_dates/"
+ncpath <- "~/Documents/Data/Winter/z500_specific_dates/"
 
 ncnames <- list.files(ncpath)
 nctitles <- paste(substr(ncnames,13,16),"-",substr(ncnames,17,18),"-",substr(ncnames,19,20),sep="")

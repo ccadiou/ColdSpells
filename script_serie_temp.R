@@ -10,7 +10,13 @@ source("fct_ncdf.R")
 source("fct_submean.R")
 
 ###### Load data ######
-path <- "~/Documents/These/Data/Winter/"
+path <- "~/Documents/Data/Winter/"
+
+df_seacyc <- read.table(paste(path,"era5_t2m_DJF_fr_seacyc.txt",sep=""))
+df_seacyc$V1 <- as.Date(df_seacyc$V1)
+df_seacyc$V2 <- df_seacyc$V2-273.15
+df <- df_seacyc
+plot_serie_temp(df_seacyc,ylegend = "Temperature (°C)",date_low="2020-12-01",date_high="2021-02-28")
 
 #Temperature at 2m
 load("./data/era5_t2m_DJFmean_fr.RData")

@@ -43,7 +43,7 @@ plot_2y <- function(df1,df2,factor,title="",xlegend="",ylegend1="",ylegend2=""){
 ####################
 # Plot SWG
 ####################
-plot_SWG <- function(path,fname,yymin,yymax,mo.start,day.start,title="",ymin=NA,ymax=NA){
+plot_SWG <- function(path,fname,yymin,yymax,mo.start,day.start,l.sim,title="",ymin=NA,ymax=NA){
   load(paste(path,fname,sep=""))
   if (is.na(ymin) | is.na(ymax)){
     rangeplot=round(range(c(unlist(simu.sta$l.T.mean),
@@ -60,7 +60,7 @@ plot_SWG <- function(path,fname,yymin,yymax,mo.start,day.start,title="",ymin=NA,
   legend("topleft",lwd=c(1,5,5),col=c("black","blue","red"),
          legend=c("Obs.","Static","Dynamic"),bty="n")
   legend("bottomleft",
-         legend=paste("France - ","t_start=",mo.start,"/",day.start,sep=""),
+         legend=paste("France - ","t_start=",mo.start,"/",day.start," - l=",l.sim,sep=""),
          bty="n")
   legend("bottomright",legend=title)
 }
