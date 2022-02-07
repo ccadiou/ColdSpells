@@ -3,6 +3,7 @@ library(lubridate)
 library(dplyr)
 library(gridExtra)  # grid.arrange function for pultiplot
 library(ggpubr)     # ggarange function for multiplot
+library(igraph)     # for the running mean
 
 
 source("fct_plot.R")
@@ -12,11 +13,82 @@ source("fct_submean.R")
 ###### Load data ######
 path <- "~/Documents/Data/Winter/"
 
+#### Seasonal cycle
 df_seacyc <- read.table(paste(path,"era5_t2m_DJF_fr_seacyc.txt",sep=""))
 df_seacyc$V1 <- as.Date(df_seacyc$V1)
-df_seacyc$V2 <- df_seacyc$V2-273.15
-df <- df_seacyc
-plot_serie_temp(df_seacyc,ylegend = "Temperature (°C)",date_low="2020-12-01",date_high="2021-02-28")
+df_seacyc$V2 <- df_seacyc$V2-273.15     #convert from K to °Ccoméd
+colnames(df_seacyc) <- c("date","t2m")
+
+#PLOT
+df_seacyc <- df_seacyc[order(as.Date(df_seacyc$date)),]       #order
+df_seacyc <- df_seacyc[df_seacyc$date > "2020-11-30" & df_seacyc$date < "2021-03-01",] #remove "2020-02-29"
+ggplot(data=df_seacyc, aes(x=date,y=t2m)) +geom_line()+ theme_linedraw()+
+  scale_x_date(date_breaks = "1 month",date_minor_breaks = "5 days",date_labels = "%b")
+
+# df <- df_seacyc
+# plot_serie_temp(df_seacyc,ylegend = "Temperature (°C)",date_low="2020-12-01",date_high="2021-02-28")
+
+
+#1963
+load("./data/era5_t2m_daily_fr.RData")
+df_t2m_1963 <- df_t2m_daily[df_t2m_daily$date > "1962-11-30" & df_t2m_daily$date < "1963-03-01",]
+df_t2m_1963 <- df_t2m_1963[order(as.Date(df_t2m_1963$date)),]
+df_t2m_1963$date <- df_seacyc$date
+
+df_t2m_1956 <- df_t2m_daily[df_t2m_daily$date > "1955-11-30" & df_t2m_daily$date <= "1956-02-28",]
+df_t2m_1956 <- df_t2m_1956[order(as.Date(df_t2m_1956$date)),]
+df_t2m_1956$date <- df_seacyc$date
+
+# filter winter dates for each year
+df_t2m_year <- lapply(c(1951:2021),function(y) cbind.data.frame(df_t2m_daily[df_t2m_daily$date > paste(y-1,"-11-30",sep="") &
+                                                                 df_t2m_daily$date <= paste(y,"-02-28",sep=""),],gp=y))
+df_t2m_year <- lapply(df_t2m_year,function(df) df[order(as.Date(df$date)),])
+#calculate running mean for each year
+df_t2m_means <- lapply(df_t2m_year,function(df) cbind.data.frame(date=df_seacyc$date,    #cbind.data.frame conserve le format date
+                                                      t2m=c(NA,NA,NA,running_mean(df[,2],7),NA,NA,NA),gp=df[,3]))
+View(df_t2m_means[[1]])
+
+#aggregate
+df_all_7mean <- do.call(rbind,df_t2m_means)
+
+df_seas <- rbind(cbind(df_t2m_1963,gp="1963"),cbind(df_t2m_1956,gp="1956")) #cbind(df_seacyc,gp="mean"),
+
+
+df_t2m_1963_7mean <- df_t2m_1963
+df_t2m_1963_7mean$t2m <- c(NA,NA,NA,running_mean(df_t2m_1963[,2],7),NA,NA,NA)
+
+df_t2m_1956_7mean <- df_t2m_1956
+df_t2m_1956_7mean$t2m <- c(NA,NA,NA,running_mean(df_t2m_1956[,2],7),NA,NA,NA)
+
+df_seacyc_7mean <- df_seacyc
+df_seacyc_7mean$t2m <- c(NA,NA,NA,running_mean(df_seacyc[,2],7),NA,NA,NA)
+
+
+df_7mean <- rbind(cbind(df_seacyc_7mean,gp="Seasonal cycle"),cbind(df_t2m_1963_7mean,gp="1963"),cbind(df_t2m_1956_7mean,gp="1956"))
+
+df_all <- rbind(cbind(df_7mean,type="7 days mean"),cbind(df_seas,type="daily"))
+
+
+p <- ggplot(data=df_all, aes(x=date,y=t2m,linetype=type,color=gp)) + geom_line()+ theme_linedraw()+
+  scale_x_date(date_breaks = "1 month",date_minor_breaks = "10 days",date_labels = "%m")#,limits=c(as.Date(date_low),as.Date(date_high)))
+p
+
+df_7mean_sc <- rbind(cbind(df_seacyc_7mean,gp="Seasonal cycle"),df_all_7mean)
+df_7mean_sc$color <- ifelse(df_7mean_sc$gp =="Seasonal cycle", 'black', 'grey')
+# df_7mean_sc[df_7mean_sc$gp=="Seasonal cycle",][,"color"] <- 'blue'
+df_7mean_sc[df_7mean_sc$gp==1956,][,"color"] <- 'red'
+df_7mean_sc[df_7mean_sc$gp==1963,][,"color"] <- 'green'
+df_7mean_sc[df_7mean_sc$gp==1985,][,"color"] <- 'blue'
+df_7mean_sc[df_7mean_sc$gp==1987,][,"color"] <- 'violet'
+df_7mean_sc$color <- as.factor(df_7mean_sc$color)
+df_7mean_sc$color <- factor(df_7mean_sc$color, levels = c("grey", "red", "green","blue","violet","black"))
+# df_7mean_sc <- df_7mean_sc[order(match(df_7mean_sc$color,levels(df_7mean_sc$color))),]
+
+p <- ggplot(data=df_7mean_sc, aes(x=date,y=t2m,color=color,group=gp)) + geom_line()+ theme_linedraw()+
+  scale_x_date(date_breaks = "1 month",date_minor_breaks = "10 days",date_labels = "%b")+#,limits=c(as.Date(date_low),as.Date(date_high)))
+  scale_color_manual(values=levels(df_7mean_sc$color),labels=c("1951-2021", "1956", "1963","1985","1987","Seasonal cycle"),name='Years')
+p
+
 
 #Temperature at 2m
 load("./data/era5_t2m_DJFmean_fr.RData")
