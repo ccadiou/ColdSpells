@@ -1,6 +1,9 @@
 library(ggplot2)
 library(extRemes)
 
+##### Non-stationarité non prise en compte !!!!! #######
+
+
 load("./data/era5_t2m_daily_fr.RData")
 nd <- 3
 df_t2m_daily_rm <- df_t2m_daily
@@ -48,33 +51,3 @@ p <- ggplot()+
   theme_linedraw()
 p
 
-####### old code, on winter mean, no valid
-df_t2m <- df_t2m[df_t2m$date!=as.Date("1963-02-14"),]
-
-load("./data/era5_t2m_DJFmean_fr.RData")
-df_t2m <- df_t2m[df_t2m$dat<as.Date("1980-02-14"),]
-
-df_t2m[,2] <- -df_t2m[,2]
-fit <-fevd(df_t2m[,2],df_t2m,units="deg C")
-plot(fit)
-
-df_t2m[,2] <- -df_t2m[,2]
-# seq(0,log(500),length.out=100)
-rp <- exp(seq(0.1,log(1000),length.out=100))
-rls <- as.data.frame(cbind(rp,rl=-return.level(fit,return.period = rp,method="MLE")))
-
-load("./data/era5_t2m_DJFmean_fr.RData")
-
-rls_empiric <-  sort(df_t2m[,2])#,decreasing=TRUE)
-ind <- c(1:length(rls_empiric))
-rls_emp <- as.data.frame(cbind(length(ind)/ind,rls_empiric))
-colnames(rls_emp) <- c("rp","rl")
-
-p <- ggplot()+
-  geom_line(data=rls,aes(x=rp,y=rl))+
-  geom_point(data=rls_emp,aes(x=rp,y=rl))+scale_x_continuous(trans='log10')+
-  theme_linedraw()
-p
-
-ggplot(df_t2m,aes(x=date,y=t2m))+geom_point()+geom_line()
-fevd(df_t2m)
