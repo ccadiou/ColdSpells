@@ -53,7 +53,7 @@ df_all_7mean <- do.call(rbind,df_t2m_means)
 
 df_seas <- rbind(cbind(df_t2m_1963,gp="1963"),cbind(df_t2m_1956,gp="1956")) #cbind(df_seacyc,gp="mean"),
 
-
+# calcultate 7-days running mean for specific years and mean
 df_t2m_1963_7mean <- df_t2m_1963
 df_t2m_1963_7mean$t2m <- c(NA,NA,NA,running_mean(df_t2m_1963[,2],7),NA,NA,NA)
 
@@ -70,26 +70,51 @@ df_all <- rbind(cbind(df_7mean,type="7 days mean"),cbind(df_seas,type="daily"))
 
 
 p <- ggplot(data=df_all, aes(x=date,y=t2m,linetype=type,color=gp)) + geom_line()+ theme_linedraw()+
-  scale_x_date(date_breaks = "1 month",date_minor_breaks = "10 days",date_labels = "%m")#,limits=c(as.Date(date_low),as.Date(date_high)))
+  scale_x_date(date_breaks = "1 month",date_minor_breaks = "10 days",date_labels = "%m")+
+  labs(x="Date",y="Temperature",title="7-days running mean over winter")
 p
 
-df_7mean_sc <- rbind(cbind(df_seacyc_7mean,gp="Seasonal cycle"),df_all_7mean)
-df_7mean_sc$color <- ifelse(df_7mean_sc$gp =="Seasonal cycle", 'black', 'grey')
-# df_7mean_sc[df_7mean_sc$gp=="Seasonal cycle",][,"color"] <- 'blue'
-df_7mean_sc[df_7mean_sc$gp==1956,][,"color"] <- 'red'
-df_7mean_sc[df_7mean_sc$gp==1963,][,"color"] <- 'green'
-df_7mean_sc[df_7mean_sc$gp==1985,][,"color"] <- 'blue'
-df_7mean_sc[df_7mean_sc$gp==1987,][,"color"] <- 'violet'
-df_7mean_sc$color <- as.factor(df_7mean_sc$color)
-df_7mean_sc$color <- factor(df_7mean_sc$color, levels = c("grey", "red", "green","blue","violet","black"))
+# df_7mean_sc <- rbind(cbind(df_seacyc_7mean,gp="Seasonal cycle"),df_all_7mean)
+# df_7mean_sc$color <- ifelse(df_7mean_sc$gp =="Seasonal cycle", 'black', 'grey')
+# # df_7mean_sc[df_7mean_sc$gp=="Seasonal cycle",][,"color"] <- 'blue'
+# df_7mean_sc[df_7mean_sc$gp==1956,][,"color"] <- 'red'
+# df_7mean_sc[df_7mean_sc$gp==1963,][,"color"] <- 'green'
+# df_7mean_sc[df_7mean_sc$gp==1985,][,"color"] <- 'blue'
+# df_7mean_sc[df_7mean_sc$gp==1987,][,"color"] <- 'violet'
+# df_7mean_sc$color <- as.factor(df_7mean_sc$color)
+# df_7mean_sc$color <- factor(df_7mean_sc$color, levels = c("grey", "red", "green","blue","violet","black"))
 # df_7mean_sc <- df_7mean_sc[order(match(df_7mean_sc$color,levels(df_7mean_sc$color))),]
+# 
+# p <- ggplot(data=df_7mean_sc, aes(x=date,y=t2m,color=color,group=gp)) + geom_line()+ theme_linedraw()+
+#   scale_x_date(date_breaks = "1 month",date_minor_breaks = "10 days",date_labels = "%b")+#,limits=c(as.Date(date_low),as.Date(date_high)))
+#   scale_color_manual(values=levels(df_7mean_sc$color),labels=c("1951-2021", "1956", "1963","1985","1987","Seasonal cycle"),name='Years')
+# p
 
-p <- ggplot(data=df_7mean_sc, aes(x=date,y=t2m,color=color,group=gp)) + geom_line()+ theme_linedraw()+
-  scale_x_date(date_breaks = "1 month",date_minor_breaks = "10 days",date_labels = "%b")+#,limits=c(as.Date(date_low),as.Date(date_high)))
-  scale_color_manual(values=levels(df_7mean_sc$color),labels=c("1951-2021", "1956", "1963","1985","1987","Seasonal cycle"),name='Years')
+df_7mean_1956 <- df_all_7mean[df_all_7mean$gp==1956,]
+df_7mean_1963 <- df_all_7mean[df_all_7mean$gp==1963,]
+df_7mean_1985 <- df_all_7mean[df_all_7mean$gp==1985,]
+df_7mean_1987 <- df_all_7mean[df_all_7mean$gp==1987,]
+
+
+p <- ggplot()+
+  geom_line(data=df_all_7mean, aes(x=date,y=t2m,group=gp,color="1951-2021")) + 
+  geom_line(data=df_7mean_1987, aes(x=date,y=t2m,color="1987"))+
+  geom_line(data=df_7mean_1985, aes(x=date,y=t2m,color="1985"))+
+  geom_line(data=df_7mean_1956, aes(x=date,y=t2m,color="1956"))+
+  geom_line(data=df_7mean_1963, aes(x=date,y=t2m,color="1963"))+
+  geom_line(data=df_seacyc_7mean, aes(x=date,y=t2m,color="Seasonal mean"))+
+  theme_linedraw()+
+  scale_color_manual(values=c("grey",palette("default")[c(2,3,4,5,1)]), 
+                     name="Year",breaks=c("1951-2021", "1956","1963","1985","1987","Seasonal mean"))+
+  scale_x_date(date_breaks = "1 month",date_minor_breaks = "10 days",date_labels = "%b")+
+  labs(x="Date",y="Temperature",title="7-days running mean over winter")
+
 p
 
 
+####################
+# Série temporelles de température et de précipitation
+####################
 #Temperature at 2m
 load("./data/era5_t2m_DJFmean_fr.RData")
 #Total precipitation data 
