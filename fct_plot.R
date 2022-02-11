@@ -2,12 +2,12 @@
 # Plots of time series ___________________________________________________________________________________________________________________________
 ####################
 
-plot_serie_temp <- function(df,title="",xlegend="",ylegend="",line=TRUE,date_low="1944-02-14",date_high="2023-02-14",trend=FALSE,n.breaks=10){
+plot_serie_temp <- function(df,title="",xlegend="",ylegend="",points=FALSE,date_low="1944-02-14",date_high="2023-02-14",trend=FALSE,n.breaks=10){
   p <- ggplot(df,aes(x=df[,1],y=df[,2]))
-  if (line) {p <- p+geom_line()}
+  if (points) {p <- p+geom_point(shape = 19, aes(color=""))}
   if (trend) {p <- p+geom_smooth(method=lm,se=FALSE)}
   return(
-    p + geom_point(shape = 19, aes(color="")) +
+    p + geom_line() +
       scale_color_manual(values = c("black")) +
       labs(titles = title,x = xlegend,y = ylegend) +
       # theme_classic()+

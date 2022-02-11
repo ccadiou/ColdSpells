@@ -74,21 +74,6 @@ p <- ggplot(data=df_all, aes(x=date,y=t2m,linetype=type,color=gp)) + geom_line()
   labs(x="Date",y="Temperature",title="7-days running mean over winter")
 p
 
-# df_7mean_sc <- rbind(cbind(df_seacyc_7mean,gp="Seasonal cycle"),df_all_7mean)
-# df_7mean_sc$color <- ifelse(df_7mean_sc$gp =="Seasonal cycle", 'black', 'grey')
-# # df_7mean_sc[df_7mean_sc$gp=="Seasonal cycle",][,"color"] <- 'blue'
-# df_7mean_sc[df_7mean_sc$gp==1956,][,"color"] <- 'red'
-# df_7mean_sc[df_7mean_sc$gp==1963,][,"color"] <- 'green'
-# df_7mean_sc[df_7mean_sc$gp==1985,][,"color"] <- 'blue'
-# df_7mean_sc[df_7mean_sc$gp==1987,][,"color"] <- 'violet'
-# df_7mean_sc$color <- as.factor(df_7mean_sc$color)
-# df_7mean_sc$color <- factor(df_7mean_sc$color, levels = c("grey", "red", "green","blue","violet","black"))
-# df_7mean_sc <- df_7mean_sc[order(match(df_7mean_sc$color,levels(df_7mean_sc$color))),]
-# 
-# p <- ggplot(data=df_7mean_sc, aes(x=date,y=t2m,color=color,group=gp)) + geom_line()+ theme_linedraw()+
-#   scale_x_date(date_breaks = "1 month",date_minor_breaks = "10 days",date_labels = "%b")+#,limits=c(as.Date(date_low),as.Date(date_high)))
-#   scale_color_manual(values=levels(df_7mean_sc$color),labels=c("1951-2021", "1956", "1963","1985","1987","Seasonal cycle"),name='Years')
-# p
 
 df_7mean_1956 <- df_all_7mean[df_all_7mean$gp==1956,]
 df_7mean_1963 <- df_all_7mean[df_all_7mean$gp==1963,]
@@ -104,13 +89,14 @@ p <- ggplot()+
   geom_line(data=df_7mean_1963, aes(x=date,y=t2m,color="1963"))+
   geom_line(data=df_seacyc_7mean, aes(x=date,y=t2m,color="Seasonal mean"))+
   theme_linedraw()+
-  scale_color_manual(values=c("grey",palette("default")[c(2,3,4,5,1)]), 
+  scale_color_manual(values=c("grey",palette("default")[c(2,3,4,5,1)]),
                      name="Year",breaks=c("1951-2021", "1956","1963","1985","1987","Seasonal mean"))+
   scale_x_date(date_breaks = "1 month",date_minor_breaks = "10 days",date_labels = "%b")+
   labs(x="Date",y="Temperature",title="7-days running mean over winter")
 
 p
 
+ob
 
 ####################
 # Série temporelles de température et de précipitation
@@ -125,7 +111,7 @@ load("./data/era5_tp_DJFmean_fr.RData")
 
 #plot
 plot_serie_temp(df_tp,ylegend = "Total precipitation (mm)")
-plot_serie_temp(df_t2m,ylegend = "2m temperature (°C)",trend=TRUE,date_low=as.Date("1949-01-01"),date_high=as.Date("2021-03-01"),n.breaks=5)
+plot_serie_temp(df_t2m,ylegend = "2m temperature (°C)",trend=FALSE,date_low=as.Date("1949-01-01"),date_high=as.Date("2021-03-01"),n.breaks=5)
 #calcul du coefficient directuer de la regréssion
 # df_t2m_year <- df_t2m
 # df_t2m_year$date <- as.numeric(format(df_t2m$date,"%Y"))
@@ -144,6 +130,18 @@ p30 <- plot_serie_temp(df_t2m_30submean,ylegend = "2m temperature (°C)")
 p90 <- plot_serie_temp(df_t2m,ylegend = "2m temperature (°C)")
 # grid.arrange(p90,p30,p10,p3, ncol=2, nrow = 2)
 ggarrange(p90,p30,p10,p3, ncol = 2, nrow=2, labels = c("a)","b)","c)","d)"))
+
+# all on same plot
+p <- ggplot()+
+  geom_line(data=df_t2m_3submean,aes(x=date,y=t2m,color="3-days min"))+
+  geom_line(data=df_t2m_10submean,aes(x=date,y=t2m,color="10-days min"))+
+  geom_line(data=df_t2m_30submean,aes(x=date,y=t2m,color="30-days min"))+
+  geom_line(data=df_t2m,aes(x=date,y=t2m,color="90-days min"))+
+  theme_linedraw()+
+  theme(legend.position = c(.9, .1),legend.title = element_blank())+
+  scale_x_date(date_breaks = "10 years",date_minor_breaks = "1 year",date_labels = "%Y")#,limits=c(as.Date(date_low),as.Date(date_high)))
+p
+
 
 #Histogramme
 plot_histo(df_t2m,xlegend="Temperature (C°)",y.n.breaks=11,y.expand=c(0,0),y.limits=c(0,11))

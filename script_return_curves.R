@@ -41,7 +41,7 @@ df_min <- na.omit(aggregate(df_t2m_winter_rm$t2m, by=list(format(df_t2m_winter_r
 colnames(df_min) <- c("date","t2m")
 
 # fit GEV model
-yy <- 0
+yy <- 1963
 df_min_rc <- df_min[df_min$date!=yy,] #filter to keep all years except the one investigated
 val_yy <- df_min[df_min$date==yy,"t2m"] #retrieve value of this specific year
 df_min_rc[,2] <- -df_min_rc[,2]       # take oposite to consider minimum
@@ -53,7 +53,7 @@ df_min_rc[,2] <- -df_min_rc[,2]
 
 ## Manual plot #####
 # calculate return levels
-rp <- exp(seq(0.1,log(100),length.out=100))
+rp <- exp(seq(0.1,log(1000),length.out=100))
 rls <- as.data.frame(cbind(rp,rl=-return.level(fit,return.period = rp,method="MLE")))
 rls <- as.data.frame(cbind(rp,-ci(fit,return.period = rp)))
 colnames(rls) <- c("rp","lower_ci","rl","upper_ci")

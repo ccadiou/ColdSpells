@@ -5,6 +5,7 @@ library(dplyr)
 
 setwd("~/Documents/Code/Winter")
 source("fct_plot.R")
+source("fct_AnaWG.R")
 
 ########## CHARGEMENT DES DONNÉES ##########
 #importance sampling
@@ -12,9 +13,10 @@ path <- "~/Documents/Data/Winter/WEGE/"
 fnames <- list.files(path,pattern="*906439*")
 fnames[[5]] <- "TX-m12d1_UNCLE-min-animsa_cal3_TX0.5meth1-897290-1951-2021.Rdat"
 fnames[[6]] <- "TX-m12d1_UNCLE-min-animsa_cal3_TX0meth1-940039-1951-2021.Rdat"
-fnames[[7]] <- "TX-m12d1_UNCLE-min-animsa_cal3_TX0.5meth1-947773-1972-2021.Rdat"
+fnames[[7]] <- "TX-m&_UNCLE-min-animsa_cal3_TX0.5meth1-947773-1972-2021.Rdat"
 fnames[[8]] <- "TX-m1d1_l30_UNCLE-min-animsa_cal3_TX0.5meth1-950187-30d_1951-2021.Rdat"
 fnames[[9]] <- "TX-m1d1_l30_UNCLE-min-animsa_cal3_TX0meth1-952730-30d_1951-2021.Rdat"
+# "TX-m12d1L90_UNCLE-min-animsa_cal3_TX0.5meth1-971442-1951-2021.Rdat" 
 
 ############
 # Plot des série temporelles obs - sta - dyn de 1951 à 2020
@@ -23,9 +25,9 @@ fnames[[9]] <- "TX-m1d1_l30_UNCLE-min-animsa_cal3_TX0meth1-952730-30d_1951-2021.
 # name <- "TX-m12d1_UNCLE-min-animsa_cal3_TX0.5meth1-897290-1951-2021.Rdat"
 ymin <- 1951
 ymax <- 2020
-mstart <- 12
-dstart <- 01
-lsim <- 30
+mstart <- get_param(fnames[[1]],1)
+dstart <- get_param(fnames[[1]],2)
+lsim <- 90
 
 dev.off()
 #load(paste(path,fnames[[5]],sep=""))
@@ -38,8 +40,12 @@ plot_SWG(path,fnames[[5]],ymin,ymax,mstart,dstart,lsim,substring(fnames[[5]],50,
 plot_SWG(path,fnames[[6]],ymin,ymax,mstart,dstart,lsim,substring(fnames[[6]],48,56))     #1951-2021 sans importance sampling
 plot_SWG(path,fnames[[7]],ymin,ymax,mstart,dstart,lsim,substring(fnames[[7]],48,56))     #1972-2021
 
+gsub(".*m([0-9]+)d([0-9]+)L([0-9]+).*cal([0-9].?[0-9]?)_TX([0-9].?[0-9]?)meth([0-9])-([0-9]*).*","\\7",
+     "TX-m12d1L90_UNCLE-min-animsa_cal3_TX0.5meth1-971442-1951-2021.Rdat")
+get_param(fnames[[1]],7)
 
-# plot_SWG(path,fnames[[5]],ymin,ymax,mstart,dstart,lsim,substring(fnames[[5]],50,58))
+
+plot_SWG(path,fnames[[5]],ymin,ymax,mstart,dstart,lsim,substring(fnames[[5]],50,58))
 
 #COmparaison avec et sans 1963
 par(mfcol=c(1,2),mar=c(3,3,2,2))
@@ -80,7 +86,7 @@ plot_SWG(path,fnames[[9]],ymin,ymax,mstart,dstart,substring(fnames[[9]],57,65)) 
 par(mfcol=c(1,2),mar=c(3,3,2,2))
 plot_SWG(path,fnames[[9]],ymin,ymax,mstart,dstart,substring(fnames[[9]],55,63),yinf,ysup)     #Simulations des janvier (30 jours)
 plot_SWG(path,fnames[[8]],ymin,ymax,mstart,dstart,substring(fnames[[8]],57,65),yinf,ysup)     #Simulations des janvier (30 jours)
->>>>>>> cc69dcd6e5ead2f97ef089897243b75712da58cc
+
 
 ########
 ### Comparaison des distributions avec et sans 1963
@@ -161,16 +167,99 @@ plot_SWG(path,fnames[[4]],ymin,ymax,mstart,dstart,lsim,substring(fnames[[4]],54,
 ##########
 load(paste(path,fnames[[4]],sep="")) # 1951-2021
 load(paste(path,fnames[[3]],sep="")) # 1951-2021 sans 1963
+load(paste(path,fnames[[2]],sep="")) # 1951-1999
+load(paste(path,fnames[[7]],sep="")) # 1972-2021
+load(paste(path,fnames[[6]],sep="")) # 1951-2021 sans ImpSam
 
-days_sim <- as.data.frame(do.call(rbind,simu.dyn$l.X$`1964`))
+days_sim <- as.data.frame(do.call(rbind,simu.dyn$l.X$`2006`))
 days_sim[,1] <- as.Date(as.character(days_sim[,1]),format="%Y%m%d")
 # days_sim <- days_sim[,c(2,1)]
 
 p <- ggplot(days_sim,aes(x=days_sim[,1]))
-p + geom_histogram(color="black", fill="snow3",bins=2555) +
+p + geom_histogram(color="black", fill="snow3",bins=71) +
       theme_linedraw()+
       theme(legend.position = "None",legend.title = element_blank())
 
+## anas of all years ####
+day_sim_all <- as.data.frame(do.call(rbind,lapply(simu.dyn$l.X, function(y) do.call(rbind,y))))
+day_sim_all[,1] <- as.Date(as.character(day_sim_all[,1]),format="%Y%m%d")
+# days_sim <- days_sim[,c(2,1)]
+day_sim_all$y.sim <- as.numeric(format(day_sim_all$t.sim,"%Y"))
+
+p <- ggplot(day_sim_all,aes(x=day_sim_all[,3]))
+p + geom_histogram(color="black", fill="snow3",bins=71) +
+  theme_linedraw()+
+  theme(legend.position = "None",legend.title = element_blank())
+
+#comp entre les deux périodes 1950-1999 et 1972-2021
+# years_1951_1999 <- as.numeric(day_sim_all[,3])
+# years_1972_2021 <- as.numeric(day_sim_all[,3])
+years_1951_1999 <- as.numeric(days_sim[,1])
+years_1972_2021 <- as.numeric(days_sim[,1])
+years <- as.data.frame(rbind(cbind(vals=years_1951_1999,group="1951-1999"),cbind(vals=years_1972_2021,group="1972-2021")))
+years$vals <- as.numeric(years$vals)
+p <- ggplot(years, aes(x=vals, color=group,fill=group)) + geom_histogram(position = "identity",alpha=0.2,bins=72)+
+  theme_linedraw()+ theme(legend.position="top",legend.title=element_blank())+labs(x="Year",y="Number of analogs")
+p
+
+####### simulations avec exclusion de l'année en cours #########
+path <- "~/Documents/Data/Winter/WEGE/"
+fnames <- list.files(path,pattern="*971442*")
+load(paste(path,fnames[[1]],sep=""))
+
+yymin <- as.numeric(args[[7]])
+yymax <- as.numeric(args[[8]])
+mstart <- as.numeric(args[[4]])
+dstart <- as.numeric(args[[5]])
+lsim <- as.numeric(args[[3]])
+yinf <- -3    # bornes inférieure et supérieures de l'axe y
+ysup <- 7
+
+par(mfcol=c(1,2),mar=c(3,3,2,2))
+plot_SWG(path,fnames[[1]],ymin,ymax,mstart,dstart,lsim,get_param(fnames[[1]],8),yinf,ysup)     #1951-2021
+plot_SWG(path,fnames[[2]],ymin,ymax,mstart,dstart,lsim,get_param(fnames[[2]],8),yinf,ysup)     #1951-2021 without 1963
+
+
+load("~/Documents/Data/Winter/WEGE/TX-m12d1L90_UNCLE-min-animsa_cal3_TX0.5meth4--1960-1962_wcyear.Rdat")
+
+#histogram de répartition temporelle des analogues pour les simulatiosn d'unae année
+days_sim <- as.data.frame(do.call(rbind,simu.dyn$l.X$`1961`))
+days_sim[,1] <- as.Date(as.character(days_sim[,1]),format="%Y%m%d")
+# days_sim <- days_sim[,c(2,1)]
+
+p <- ggplot(days_sim,aes(x=days_sim[,1]))
+p + geom_histogram(color="black", fill="snow3",bins=71) +
+  theme_linedraw()+
+  theme(legend.position = "None",legend.title = element_blank())
+
+# histogramme des dates d'analogues dans les simulations en affichant l'année de l'hiver et en retirnat les premiers jours des simulations
+load(paste(path,fnames[[1]],sep=""))
+load(paste(path,fnames[[2]],sep=""))
+
+df_sim <- as.data.frame(do.call(rbind,lapply(simu.dyn$l.X$`1964`,function(sim) cbind(sim,c(1:nrow(sim))))))
+df_sim$t.sim <- as.Date(as.character(df_sim$t.sim),format="%Y%m%d")
+df_sim$year <- as.numeric(format(df_sim$t.sim,"%Y"))
+df_sim$year[format(df_sim$t.sim,"%m")=="12"] <- df_sim$year[format(df_sim$t.sim,"%m")=="12"]+1
+df_sim <- df_sim[df_sim$V3 != 1,] #enlève les premiers jours des simulations (01-12-yy)
+
+p <- ggplot(df_sim,aes(x=df_sim[,4]))
+p + geom_histogram(color="black", fill="snow3",bins=71) +
+  theme_linedraw()+
+  theme(legend.position = "None",legend.title = element_blank())
+
+## position de l'analogue dans la simulation en fonction de la date
+# load(paste(path,fnames[[1]],sep=""))
+ggplot(df_sim,aes(x=year,y=V3))+geom_point()
+df_sim_year <- df_sim[df_sim$year==1964,]
+ggplot(df_sim_year,aes(x=V3))+ geom_histogram(color="black", fill="snow3",bins=61)
+
+# count_date_year <- aggregate(t.sim ~ V3, data=df_sim_year,FUN=length)
+count_date_year <- df_sim_year %>% count(V3)
+
+
+############
+# Fréquence de chaque jour analogue
+###########
 x <- as.Date(1:26176, origin = "1950-01-01")
 x <- cut(x, breaks = "day")
 dates_frq <- cbind(as.data.frame(x),0)
@@ -271,4 +360,8 @@ p2 <- plot_box(simu.dyn.2010.6.Xmean,dfval=simu.dyn.2010.6.Tmean,title="2010 - a
 p3 <- plot_box(simu.dyn.1962.3.Xmean,dfval=simu.dyn.1962.3.Tmean,title="1962 - alpha.cal=3")
 p4 <- plot_box(simu.dyn.1962.6.Xmean,dfval=simu.dyn.1962.6.Tmean,title="1962 - alpha.cal=6")
 grid.arrange(p1, p2, p3, p4, ncol=2, nrow = 2)
+
+
+########### FIN DU SCRIPT #####################
+
 

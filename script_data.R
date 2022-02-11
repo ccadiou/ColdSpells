@@ -94,6 +94,26 @@ save(df_t2m_3submean,file="./data/era5_t2m_DJF3mean.RData")
 save(df_t2m_10submean,file="./data/era5_t2m_DJF10mean.RData")
 save(df_t2m_30submean,file="./data/era5_t2m_DJF30mean.RData")
 
+## Calcul des moyennes glissantes
+df_t2m_90mean <- df_t2m_daily
+df_t2m_90mean$t2m <- c(rep(NA,44),running_mean(df_t2m_daily$t2m,90),rep(NA,45))
+save(df_t2m_90mean,file="./data/era5_t2m_90_mean.RData")
+
+df_t2m_60mean <- df_t2m_daily
+df_t2m_60mean$t2m <- c(rep(NA,29),running_mean(df_t2m_daily$t2m,60),rep(NA,30))
+save(df_t2m_60mean,file="./data/era5_t2m_60_mean.RData")
+
+df_t2m_30mean <- df_t2m_daily
+df_t2m_30mean$t2m <- c(rep(NA,14),running_mean(df_t2m_daily$t2m,30),rep(NA,15))
+save(df_t2m_30mean,file="./data/era5_t2m_30_mean.RData")
+
+df_t2m_10_mean <- df_t2m_daily
+df_t2m_10_mean$t2m <- c(rep(NA,4),running_mean(df_t2m_daily$t2m,10),rep(NA,5))
+save(df_t2m_10_mean,file="./data/era5_t2m_10_mean.RData")
+
+df_t2m_3_mean <- df_t2m_daily
+df_t2m_3_mean$t2m <- c(rep(NA,1),running_mean(df_t2m_daily$t2m,3),rep(NA,1))
+save(df_t2m_3_mean,file="./data/era5_t2m_10_mean.RData")
 
 #### Snowfall ####
 # yearmean of DJF
