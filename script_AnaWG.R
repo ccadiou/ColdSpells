@@ -1,7 +1,7 @@
 library(ggplot2)
 library(dplyr)
 # library(plyr)
-# library(gridExtra)
+library(gridExtra)
 
 setwd("~/Documents/Code/Winter")
 source("fct_plot.R")
@@ -63,7 +63,7 @@ plot_SWG(path,fnames[[2]],ymin,ymax,mstart,dstart,lsim,substring(fnames[[2]],50,
 plot_SWG(path,fnames[[7]],ymin,ymax,mstart,dstart,lsim,substring(fnames[[7]],50,58))     #1972-2021
 
 ## Calcul des 2à meilleures analogues sur la nouvelle période (sans NA)
-path <- "~/Documents/Thebse/Data/Winter/WEGE/"
+path <- "~/Documents/These/Data/Winter/WEGE/"
 fnames <- list.files(path,pattern="*954601")
 yinf <- -4
 ysup <- 8
@@ -204,7 +204,7 @@ p
 
 ####### simulations avec exclusion de l'année en cours #########
 path <- "~/Documents/Data/Winter/WEGE/"
-fnames <- list.files(path,pattern="*971442*")
+fnames <- list.files(path,pattern="*972596*")
 load(paste(path,fnames[[1]],sep=""))
 
 yymin <- as.numeric(args[[7]])
@@ -216,41 +216,37 @@ yinf <- -3    # bornes inférieure et supérieures de l'axe y
 ysup <- 7
 
 par(mfcol=c(1,2),mar=c(3,3,2,2))
-plot_SWG(path,fnames[[1]],ymin,ymax,mstart,dstart,lsim,get_param(fnames[[1]],8),yinf,ysup)     #1951-2021
-plot_SWG(path,fnames[[2]],ymin,ymax,mstart,dstart,lsim,get_param(fnames[[2]],8),yinf,ysup)     #1951-2021 without 1963
+plot_SWG(path,fnames[[1]],yymin,yymax,mstart,dstart,lsim,get_param(fnames[[1]],8))#,yinf,ysup)     #1951-2021
+plot_SWG(path,fnames[[2]],yymin,yymax,mstart,dstart,lsim,get_param(fnames[[2]],8))#,yinf,ysup)     #1951-2021 without current year
 
-
-load("~/Documents/Data/Winter/WEGE/TX-m12d1L90_UNCLE-min-animsa_cal3_TX0.5meth4--1960-1962_wcyear.Rdat")
-
-#histogram de répartition temporelle des analogues pour les simulatiosn d'unae année
-days_sim <- as.data.frame(do.call(rbind,simu.dyn$l.X$`1961`))
-days_sim[,1] <- as.Date(as.character(days_sim[,1]),format="%Y%m%d")
-# days_sim <- days_sim[,c(2,1)]
-
-p <- ggplot(days_sim,aes(x=days_sim[,1]))
-p + geom_histogram(color="black", fill="snow3",bins=71) +
-  theme_linedraw()+
-  theme(legend.position = "None",legend.title = element_blank())
+dyns_1963 <- simu.dyn$l.X$`1963`
+dyn_1963 <- as.data.frame(do.call(rbind,dyns_1963))
 
 # histogramme des dates d'analogues dans les simulations en affichant l'année de l'hiver et en retirnat les premiers jours des simulations
 load(paste(path,fnames[[1]],sep=""))
 load(paste(path,fnames[[2]],sep=""))
 
-df_sim <- as.data.frame(do.call(rbind,lapply(simu.dyn$l.X$`1964`,function(sim) cbind(sim,c(1:nrow(sim))))))
+df_sim <- as.data.frame(do.call(rbind,lapply(simu.dyn$l.X$`1963`,function(sim) cbind(sim,c(1:nrow(sim))))))
 df_sim$t.sim <- as.Date(as.character(df_sim$t.sim),format="%Y%m%d")
 df_sim$year <- as.numeric(format(df_sim$t.sim,"%Y"))
-df_sim$year[format(df_sim$t.sim,"%m")=="12"] <- df_sim$year[format(df_sim$t.sim,"%m")=="12"]+1
+df_sim$year[format(df_sim$t.sim,"%m") %in% c('11',"12")] <- df_sim$year[format(df_sim$t.sim,"%m") %in% c('11',"12")]+1    #compte les jours de décembre y-1 comme de l'hiver de l'année y
 df_sim <- df_sim[df_sim$V3 != 1,] #enlève les premiers jours des simulations (01-12-yy)
 
-p <- ggplot(df_sim,aes(x=df_sim[,4]))
-p + geom_histogram(color="black", fill="snow3",bins=71) +
+df_sim <- df_sim[df_sim$year !=1963,]
+
+p0 <- ggplot(data=df_sim,aes(x=year))+
+  geom_histogram(color="black", fill="snow3",bins=71) +
   theme_linedraw()+
   theme(legend.position = "None",legend.title = element_blank())
+
+grid.arrange(p0,pcY, ncol = 2 )
+
+
 
 ## position de l'analogue dans la simulation en fonction de la date
 # load(paste(path,fnames[[1]],sep=""))
 ggplot(df_sim,aes(x=year,y=V3))+geom_point()
-df_sim_year <- df_sim[df_sim$year==1964,]
+df_sim_year <- df_sim[df_sim$year==1963,]
 ggplot(df_sim_year,aes(x=V3))+ geom_histogram(color="black", fill="snow3",bins=61)
 
 # count_date_year <- aggregate(t.sim ~ V3, data=df_sim_year,FUN=length)
